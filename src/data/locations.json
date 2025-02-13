@@ -1,0 +1,24 @@
+{
+  "lumbridge": {
+    "id": "lumbridge",
+    "name": "Lumbridge",
+    "description": "A friendly town.",
+    "features": {
+      "mining": true,
+      "woodcutting": false,
+      "fishing": true,
+      "bank": true
+    }
+  },
+  "dark_forest": {
+    "id": "dark_forest",
+    "name": "Dark Forest",
+    "description": "A mysterious forest.",
+    "features": {
+      "mining": true,
+      "woodcutting": false,
+      "fishing": false,
+      "bank": false
+    }
+  }
+}

@@ -1,0 +1,111 @@
+{
+    "copper_ore": {
+        "id": "copper_ore",
+        "name": "Copper Ore",
+        "type": "resource",
+        "value": 10,
+        "image": "/assets/images/items/ores/copper_ore.png"
+    },
+    "iron_ore": {
+        "id": "iron_ore",
+        "name": "Iron Ore",
+        "type": "resource",
+        "value": 10,
+        "image": "/assets/images/items/ores/iron_ore.png"
+    },
+    "bronze_chainbody": {
+        "id": "bronze_chainbody",
+        "name": "Bronze Chainbody",
+        "type": "chest",
+        "attack_bonus": 2,
+        "value": 10,
+        "image": "/assets/images/items/armor/bronze_chainbody.png"
+    },
+    "bronze_sword": {
+      "id": "bronze_sword",
+      "name": "Bronze Sword",
+      "type": "weapon",
+      "attack_bonus": 2,
+      "value": 10,
+      "image": "/assets/images/items/weapons/bronze_sword.png"
+    },
+    "iron_sword": {
+        "id": "iron_sword",
+        "name": "Iron Sword",
+        "type": "weapon",
+        "attack_bonus": 4,
+        "value": 10,
+        "image": "/assets/images/items/weapons/iron_sword.png"
+    },
+    "leather_helmet": {
+      "id": "leather_helmet",
+      "name": "Leather Helmet",
+      "type": "head",
+      "defence_bonus": 3,
+      "value": 20,
+      "image": "/assets/images/items/armor/leather_helmet.png"
+    },
+    "leather_boots": {
+        "id": "leather_boots",
+        "name": "Leather Boots",
+        "type": "feet",
+        "defence_bonus": 3,
+        "value": 20,
+        "image": "/assets/images/items/armor/leather_boots.png"
+    },
+    "leather_gloves": {
+        "id": "leather_gloves",
+        "name": "Leather Gloves",
+        "type": "hands",
+        "defence_bonus": 3,
+        "value": 20,
+        "image": "/assets/images/items/armor/leather_gloves.png"
+    },
+    "robe_bottom": {
+        "id": "robe_bottom",
+        "name": "Robe Bottom",
+        "type": "legs",
+        "magic_bonus": 3,
+        "value": 20,
+        "image": "/assets/images/items/armor/robe_bottom.png"
+    },
+    "gold_ring": {
+      "id": "gold_ring",
+      "name": "Gold Ring",
+      "type": "ring",
+      "gold_multiplier": 2.0,
+      "value": 50,
+      "image": "/assets/images/items/jewelry/gold_ring.png"
+    },
+    "silver_necklace": {
+        "id": "silver_necklace",
+        "name": "Silver Necklace",
+        "type": "neck",
+        "gold_multiplier": 2.0,
+        "value": 50,
+        "image": "/assets/images/items/jewelry/silver_necklace.png"
+    },
+    "obsidian_cape": {
+        "id": "obsidian_cape",
+        "name": "Obsidian Cape",
+        "type": "back",
+        "value": 50,
+        "image": "/assets/images/items/armor/obsidian_cape.png"
+    },
+    "wooden_shield": {
+        "id": "wooden_shield",
+        "name": "Wooden Shield",
+        "type": "shield",
+        "defence_bonus": 5,
+        "value": 50,
+        "image": "/assets/images/items/armor/wooden_shield.png"
+    },
+    "health_potion": {
+      "id": "health_potion",
+      "name": "Health Potion",
+      "type": "consumable",
+      "heal": 20,
+      "value": 5,
+      "image": "/assets/images/items/potions/health_potion.png"
+    }
+}
