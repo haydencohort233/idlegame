@@ -1,72 +1,53 @@
-import React, { useEffect, useState } from "react";
+// src/components/Mining.jsx
+import React, { useState } from "react";
 import usePlayerStore from "../store/usePlayerStore";
-import rocks from "../data/rocks.json";
+import rocksData from "../data/rocks.json";
 
-function Mining() {
-  const startTask = usePlayerStore((state) => state.startSkillTask);
-  const stopTask = usePlayerStore((state) => state.stopSkillTask);
-  const activeTask = usePlayerStore((state) => state.activeSkillTask);
-  const miningSkill = usePlayerStore((state) => state.skills.mining);
-  const location = usePlayerStore((state) => state.location);
+const Mining = () => {
+  const [selectedRock, setSelectedRock] = useState(null);
+  const activeSkillTask = usePlayerStore((state) => state.activeSkillTask);
+  const startSkillTask = usePlayerStore((state) => state.startSkillTask);
+  const stopSkillTask = usePlayerStore((state) => state.stopSkillTask);
 
-  // For this example, we use copper_rock.
-  const availableRock = rocks.copper_rock;
+  // Called when the player clicks a "Start Mining [Rock]" button.
+  const handleStartMining = (rockId) => {
+    const rock = rocksData[rockId];
+    if (!rock) return;
+    
+    // Start the mining task with the new API.
+    startSkillTask("mining", { rockId, interval: rock.interval });
+    setSelectedRock(rock);
+  };
 
-  const [progress, setProgress] = useState(0);
-
-  // Update progress bar based on elapsed time since the task started.
-  useEffect(() => {
-    let interval;
-    if (activeTask && activeTask.taskDefinition.interval) {
-      interval = setInterval(() => {
-        const elapsed = Date.now() - activeTask.startTime;
-        const p = Math.min(elapsed / activeTask.taskDefinition.interval, 1);
-        setProgress(p);
-      }, 100);
-    } else {
-      setProgress(0);
-    }
-    return () => clearInterval(interval);
-  }, [activeTask]);
-
-  const startMining = () => {
-    // Only allow mining if the player is in the correct location and meets the level requirement.
-    if (location !== "lumbridge" || miningSkill.level < availableRock.level_req) return;
-    startTask({
-      interval: availableRock.interval, // Use the rock's specific interval (in ms)
-      // onTick calls mineTick with the rock's properties.
-      onTick: (state) => state.mineTick(state, availableRock),
-      // Continue mining only if inventory isn't full and the location is correct.
-      condition: (state) => state.inventory.length < 100 && state.location === "lumbridge",
-    });
+  // Called when the player manually stops mining.
+  const handleStopMining = () => {
+    stopSkillTask();
+    setSelectedRock(null);
   };
 
   return (
     <div>
-      <h3>Mining</h3>
-      <p>
-        Mining Level: {miningSkill.level} | EXP: {miningSkill.exp} / {miningSkill.level * 1000}
-      </p>
-      <div
-        style={{
-          border: "1px solid #000",
-          width: "20%",
-          height: "20px",
-          marginBottom: "10px",
-          position: "relative"
-        }}
-      >
-        <div style={{ background: "green", width: `${progress * 100}%`, height: "100%" }} />
-      </div>
-      {activeTask ? (
-        <button onClick={stopTask}>Stop Mining</button>
+      <h2>Mining</h2>
+      {activeSkillTask ? (
+        <div>
+          <p>
+            Mining {selectedRock ? selectedRock.name : "…"} (Elapsed:{" "}
+            {Math.floor((Date.now() - activeSkillTask.startTime) / 1000)} sec)
+          </p>
+          <button onClick={handleStopMining}>Stop Mining</button>
+        </div>
       ) : (
-        <button onClick={startMining}>
-          Start Mining {availableRock.name}
-        </button>
+        <div>
+          <p>Select a rock to mine:</p>
+          {Object.keys(rocksData).map((rockId) => (
+            <button key={rockId} onClick={() => handleStartMining(rockId)}>
+              Start Mining {rocksData[rockId].name}
+            </button>
+          ))}
+        </div>
       )}
     </div>
   );
-}
+};
 
 export default Mining;

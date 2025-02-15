@@ -11,6 +11,7 @@ import locationsData from "./data/locations.json";
 
 function App() {
     const handleOfflineEarnings = usePlayerStore((state) => state.handleOfflineEarnings);
+    const handleOfflineSkillProgression = usePlayerStore((state) => state.handleOfflineSkillProgression);
     const gainGold = usePlayerStore((state) => state.gainGold);
     const location = usePlayerStore((state) => state.location);
     const [offlineGoldMessage, setOfflineGoldMessage] = useState("");
@@ -19,17 +20,20 @@ function App() {
     const currentLocationData = locationsData[location] || {};
 
     useEffect(() => {
+        // Process offline gold earnings
         const goldGained = handleOfflineEarnings();
-        if (goldGained > 100) {
-            setOfflineGoldMessage(`While you were gone, you gained ${goldGained} gold!`);
-        }
-
+        // Optionally show a message if gold was gained
+        // Process any active mining (or other skills) offline progress
+        const offlineTicks = handleOfflineSkillProgression();
+        console.log(`Offline mining progress processed ${offlineTicks} ticks.`);
+    
+        // Set up any intervals (for online passive progression, etc.)
         const interval = setInterval(() => {
-            gainGold(10);
+          gainGold(10);
         }, 1000);
-
+    
         return () => clearInterval(interval);
-    }, [handleOfflineEarnings, gainGold]);
+    }, [handleOfflineEarnings, handleOfflineSkillProgression, gainGold]);
 
     return (
         <div>
