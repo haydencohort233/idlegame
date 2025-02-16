@@ -8,6 +8,7 @@ import PlayerSkills from "./components/PlayerSkills";
 import Mining from "./components/Mining";
 import LocationsMap from "./components/LocationsMap";
 import locationsData from "./data/locations.json";
+import Achievements from "./components/Achievements";
 
 function App() {
     const handleOfflineEarnings = usePlayerStore((state) => state.handleOfflineEarnings);
@@ -25,7 +26,7 @@ function App() {
         // Optionally show a message if gold was gained
         // Process any active mining (or other skills) offline progress
         const offlineTicks = handleOfflineSkillProgression();
-        console.log(`Offline mining progress processed ${offlineTicks} ticks.`);
+        //console.log(`Offline mining progress processed ${offlineTicks} ticks.`);
     
         // Set up any intervals (for online passive progression, etc.)
         const interval = setInterval(() => {
@@ -48,6 +49,7 @@ function App() {
             <Actions />
             <Inventory />
             <Equipment />
+            <Achievements />
         </div>
     );
 }

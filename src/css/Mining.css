@@ -1,15 +1,15 @@
 .mining-btn {
     display: flex;
-    align-items: center;  /* Centers vertically */
-    justify-content: center; /* Centers text & image horizontally */
-    gap: 8px;
+    align-items: center;
+    gap: 6px;
+    background: #008cba;
+    color: white;
+    font-size: 14px;
     padding: 8px 12px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    background: white;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background 0.2s;
-    height: 40px; /* Adjust to match image size */
+    font-weight: bold;
   }
   
   .mining-btn:hover {

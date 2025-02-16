@@ -1,0 +1,35 @@
+{
+    "mine_100_ores": {
+      "id": "mine_100_ores",
+      "name": "Ore Hoarder",
+      "description": "Mine 100 ores.",
+      "progressType": "counter",
+      "goal": 100,
+      "reward": { "gold": 500 }
+    },
+    "reach_level_5_mining": {
+      "id": "reach_level_5_mining",
+      "name": "Mining Apprentice",
+      "description": "Reach level 5 in Mining.",
+      "progressType": "level",
+      "goal": 5,
+      "reward": { "exp": 1000 }
+    },
+    "earn_1000_gold": {
+      "id": "earn_1000_gold",
+      "name": "Starting Wealth",
+      "description": "Earn 1,000 gold.",
+      "progressType": "counter",
+      "goal": 1000,
+      "reward": { "item": "bronze_sword" }
+    },
+    "earn_1000000_gold": {
+        "id": "earn_1000000_gold",
+        "name": "Millionaire",
+        "description": "Earn 1,000,000 gold.",
+        "progressType": "counter",
+        "goal": 1000000,
+        "reward": { "item": "obsidian_cape" }
+    }
+  }
+  

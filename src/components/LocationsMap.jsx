@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import usePlayerStore from "../store/usePlayerStore";
 import locationsData from "../data/locations.json";
+import mapIcon from "/assets/images/icons/map.png";
 import "../css/LocationsMap.css";
 
 function LocationsMap() {
@@ -32,7 +33,10 @@ function LocationsMap() {
 
   return (
     <div>
-      <button className="open-map-btn" onClick={openModal}>Open Map</button>
+      <button className="open-map-btn" onClick={openModal}>
+        <img src={mapIcon} alt="Map" className="map-icon" />
+        World Map
+      </button>
 
       {isOpen && (
         <div className="modal-overlay" onClick={closeModal}>

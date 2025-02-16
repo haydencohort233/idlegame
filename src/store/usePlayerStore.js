@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { getItem } from "../utils/itemUtils";
 import rocksData from "../data/rocks.json";
 import experienceData from "../data/experience.json";
+import achievementsData from "../data/achievements.json";
 
 const defaultState = {
   name: "Player",
@@ -19,7 +20,7 @@ const defaultState = {
     mining: { level: 1, exp: 0, totalExp: 0 }, 
     fishing: { level: 1, exp: 0, totalExp: 0 }, 
     crafting: { level: 1, exp: 0, totalExp: 0 }, 
-    agility: { level: 1, exp: 0, totalExp: 0 }, 
+    agility: { level: 1, exp: 0, totalExp: 0 } 
   },
   inventory: [],
   inventoryCapacity: 30,
@@ -34,12 +35,18 @@ const defaultState = {
     hands: null,
     weapon: null,
     shield: null,
-    ring: null,
+    ring: null
   },
   buildings: {},
   location: "lumbridge",
+  visitedLocations: [],
   lastActive: Date.now(),
   autoSaveInterval: 30000, // 30 seconds
+  // Initialize achievements based on achievementsData
+  achievements: Object.keys(achievementsData).reduce((acc, key) => {
+    acc[key] = { progress: 0, completed: false, claimed: false };
+    return acc;
+  }, {})
   // activeSkillTask will be stored as a serializable object:
   // { timerId, taskKey, taskData, startTime, interval }
 };
@@ -60,9 +67,10 @@ const mergedState = {
   ...savedState,
   stats: {
     ...defaultState.stats,
-    ...(savedState.stats || {}),
+    ...(savedState.stats || {})
   },
   skills: mergedSkills,
+  achievements: savedState.achievements || defaultState.achievements
 };
 
 const usePlayerStore = create((set, get) => {
@@ -103,25 +111,48 @@ const usePlayerStore = create((set, get) => {
   
     let newLevel = currentMining.level;
   
-    // Check if the player has enough XP to level up
+    // Level up while total XP meets the threshold.
     while (newTotalExp >= getExpThreshold(newLevel)) {
-      newLevel++; // Increase level
+      newLevel++;
     }
   
-    // Reset current level XP (exp) to match progress in the new level
+    // Current XP resets to show progress within the current level.
     let newExpForCurrentLevel = newTotalExp - getExpThreshold(newLevel - 1);
   
     // Award the ore (resource)
     const rewardItem = getItem(rock.reward);
     let updatedInventory = [...state.inventory];
     if (rewardItem) {
-      const existingItem = updatedInventory.find(i => i.id === rewardItem.id);
+      const existingItem = updatedInventory.find((i) => i.id === rewardItem.id);
       if (existingItem) {
         existingItem.quantity = Math.min((existingItem.quantity || 0) + 1, 999);
       } else {
         updatedInventory.push({ ...rewardItem, quantity: 1 });
       }
     }
+  
+    // Update achievements inline:
+    const prevOreProgress = state.achievements.mine_100_ores?.progress || 0;
+    const newOreProgress = prevOreProgress + 1;
+    const oreCompleted = newOreProgress >= achievementsData.mine_100_ores.goal;
+  
+    // For reach_level_5_mining, we simply use the new level.
+    const levelAchieved = newLevel;
+    const levelCompleted = levelAchieved >= achievementsData.reach_level_5_mining.goal;
+  
+    const newAchievements = {
+      ...state.achievements,
+      mine_100_ores: {
+        progress: newOreProgress,
+        completed: oreCompleted,
+      },
+      reach_level_5_mining: {
+        progress: levelAchieved,
+        completed: levelCompleted,
+      },
+    };
+  
+    console.log("[mineTick] Updated achievements:", newAchievements);
   
     return {
       ...state,
@@ -130,14 +161,15 @@ const usePlayerStore = create((set, get) => {
         ...state.skills,
         mining: {
           level: newLevel,
-          exp: newExpForCurrentLevel, // Resets per level but follows totalExp tracking
-          totalExp: newTotalExp, // Always increasing
+          exp: newExpForCurrentLevel,
+          totalExp: newTotalExp,
         },
       },
+      achievements: newAchievements,
     };
   };  
 
-  // mineRock: one-off mining action using a given rock. Active Mining.
+  // mineRock: one-off mining action using a given rock.
   const mineRock = (rock, playerMining) => {
     set((state) => {
       if (playerMining.level < rock.level_req) {
@@ -145,24 +177,33 @@ const usePlayerStore = create((set, get) => {
         return state;
       }
       let newExp = playerMining.exp + rock.exp;
+      let newTotalExp = (playerMining.totalExp || 0) + rock.exp;
       let newLevel = playerMining.level;
-      while (newExp >= getExpThreshold(newLevel)) {
-        newExp -= getExpThreshold(newLevel);
+      while (newTotalExp >= getExpThreshold(newLevel)) {
         newLevel++;
       }
+      let newExpForCurrentLevel = newTotalExp - getExpThreshold(newLevel - 1);
+      
+      // Update achievements for one-off mining:
+      usePlayerStore.getState().updateAchievement("mine_100_ores", 1);
+      if (newLevel >= 5) {
+        usePlayerStore.getState().updateAchievement("reach_level_5_mining", 0, newLevel);
+      }
+      
       state.addItem(rock.reward);
       return {
         skills: {
           ...state.skills,
           mining: {
             level: newLevel,
-            exp: newExp,
-          },
-        },
+            exp: newExpForCurrentLevel,
+            totalExp: newTotalExp
+          }
+        }
       };
     });
     saveState();
-  };
+  };  
 
   // TASK MAPPINGS:
   // Given a taskKey and taskData, return the onTick and condition functions.
@@ -179,10 +220,91 @@ const usePlayerStore = create((set, get) => {
           // Stop if the player is not in one of the rock's allowed locations
           if (!rock.locations.includes(state.location.toLowerCase())) return false;
           return true;
-        },
+        }
       };
-    },
+    }
     // Add other skills here
+  };
+
+  // ACHIEVEMENT UPDATE FUNCTION
+  const updateAchievement = (id, increment = 1, customValue = null) => {
+    set((state) => {
+      if (!state.achievements[id] || state.achievements[id].completed) {
+        //console.log(`[Achievement] ${id} already completed or not found.`);
+        return {}; // no update
+      }
+      const achievementDef = achievementsData[id];
+      let progress = state.achievements[id].progress;
+      
+      //console.log(
+      //  `[Achievement] Before update: ${id} progress: ${progress}, increment: ${increment}, customValue: ${customValue}`
+      //);
+      
+      switch (achievementDef.progressType) {
+        case "counter":
+          progress += increment;
+          break;
+        case "level":
+          if (customValue !== null) progress = customValue;
+          break;
+        case "unique":
+          progress += 1;
+          break;
+        case "specific":
+          if (customValue === achievementDef.goal) {
+            progress = 1;
+          }
+          break;
+        default:
+          break;
+      }
+      
+      const goalValue =
+        typeof achievementDef.goal === "number" ? achievementDef.goal : 1;
+      const completed = progress >= goalValue;
+      
+      //console.log(
+      //  `[Achievement] After update: ${id} progress: ${progress}, completed: ${completed}`
+      //);
+      
+      if (completed) {
+        console.log(`[Achievement] ${id} completed! Reward:`, achievementDef.reward);
+        // Optionally trigger reward logic here.
+      }
+      
+      // Return a partial update that merges with the existing state.
+      return {
+        achievements: {
+          ...state.achievements,
+          [id]: { progress, completed }
+        }
+      };
+    });
+    saveState();
+  };  
+
+    // Create default achievements from achievementsData
+  const defaultAchievements = Object.keys(achievementsData).reduce((acc, key) => {
+    acc[key] = { progress: 0, completed: false };
+    return acc;
+  }, {});
+
+  // Merge saved achievements with the default ones.
+  // Any saved achievement values override the defaults.
+  const mergedAchievements = { 
+    ...defaultAchievements, 
+    ...(savedState.achievements || {}) 
+  };
+
+  const mergedState = {
+    ...defaultState,
+    ...savedState,
+    stats: {
+      ...defaultState.stats,
+      ...(savedState.stats || {})
+    },
+    skills: mergedSkills,
+    achievements: mergedAchievements
   };
 
   return {
@@ -190,7 +312,7 @@ const usePlayerStore = create((set, get) => {
     calculateTotalStats,
     mineTick,
     mineRock,
-
+    updateAchievement,
     // Start a skill task using a serializable taskKey and taskData.
     startSkillTask: (taskKey, taskData) => {
       if (get().activeSkillTask) return; // Only one active task at a time.
@@ -207,15 +329,20 @@ const usePlayerStore = create((set, get) => {
         }
         set((state) => {
           const newState = mapping.onTick(state);
+          // Update achievements after each tick:
+          usePlayerStore.getState().updateAchievement("mine_100_ores", 1);
+          if (newState.skills.mining.level >= 5) {
+            usePlayerStore.getState().updateAchievement("reach_level_5_mining", 0, newState.skills.mining.level);
+          }
           return {
             ...newState,
-            activeSkillTask: { ...state.activeSkillTask, startTime: Date.now() },
+            activeSkillTask: { ...state.activeSkillTask, startTime: Date.now() }
           };
         });
         saveState();
       }, taskData.interval);
       set({ activeSkillTask: { timerId, taskKey, taskData, startTime: Date.now(), interval: taskData.interval } });
-    },
+    },    
 
     stopSkillTask: () => {
       const activeTask = get().activeSkillTask;
@@ -226,57 +353,54 @@ const usePlayerStore = create((set, get) => {
     },
 
     handleOfflineSkillProgression: () => {
-        const activeTask = get().activeSkillTask;
-        if (!activeTask) return; // No active task to process.
-        // Check that we have a valid mapping.
-        if (!activeTask.taskKey || typeof taskMappings[activeTask.taskKey] !== "function") {
-          console.warn(`No valid mapping for task key: ${activeTask.taskKey}. Clearing active task.`);
+      const activeTask = get().activeSkillTask;
+      if (!activeTask) return;
+      if (!activeTask.taskKey || typeof taskMappings[activeTask.taskKey] !== "function") {
+        console.warn(`No valid mapping for task key: ${activeTask.taskKey}. Clearing active task.`);
+        if (activeTask.timerId) clearInterval(activeTask.timerId);
+        set({ activeSkillTask: null });
+        return;
+      }
+      const mapping = taskMappings[activeTask.taskKey](activeTask.taskData);
+      const now = Date.now();
+      const elapsed = now - activeTask.startTime;
+      const maxDuration = 12 * 60 * 60 * 1000; // 12 hours in ms.
+      const effectiveElapsed = Math.min(elapsed, maxDuration);
+      const ticks = Math.floor(effectiveElapsed / activeTask.interval);
+      let newState = get();
+      for (let i = 0; i < ticks; i++) {
+        newState = mapping.onTick(newState);
+        if (mapping.condition && !mapping.condition(newState)) {
           if (activeTask.timerId) clearInterval(activeTask.timerId);
-          set({ activeSkillTask: null });
-          return;
+          newState.activeSkillTask = null;
+          break;
         }
-        const mapping = taskMappings[activeTask.taskKey](activeTask.taskData);
-        const now = Date.now();
-        const elapsed = now - activeTask.startTime;
-        const maxDuration = 12 * 60 * 60 * 1000; // 12 hours in ms.
-        const effectiveElapsed = Math.min(elapsed, maxDuration);
-        const ticks = Math.floor(effectiveElapsed / activeTask.interval);
-        let newState = get();
-        for (let i = 0; i < ticks; i++) {
-          newState = mapping.onTick(newState);
-          if (mapping.condition && !mapping.condition(newState)) {
-            if (activeTask.timerId) clearInterval(activeTask.timerId);
-            newState.activeSkillTask = null;
-            break;
-          }
+      }
+      if (newState.activeSkillTask) {
+        newState.activeSkillTask.startTime = now;
+        if (!newState.activeSkillTask.timerId) {
+          const timerId = setInterval(() => {
+            if (mapping.condition && !mapping.condition(get())) {
+              clearInterval(timerId);
+              set({ activeSkillTask: null });
+              return;
+            }
+            set((state) => {
+              const updatedState = mapping.onTick(state);
+              return {
+                ...updatedState,
+                activeSkillTask: { ...state.activeSkillTask, startTime: Date.now() }
+              };
+            });
+            saveState();
+          }, newState.activeSkillTask.interval);
+          newState.activeSkillTask.timerId = timerId;
         }
-        // Update the active task's startTime in the new state
-        if (newState.activeSkillTask) {
-          newState.activeSkillTask.startTime = now;
-          // If no valid timerId exists (because it wasn't persisted offline), restart the task timer.
-          if (!newState.activeSkillTask.timerId) {
-            const timerId = setInterval(() => {
-              if (mapping.condition && !mapping.condition(get())) {
-                clearInterval(timerId);
-                set({ activeSkillTask: null });
-                return;
-              }
-              set((state) => {
-                const updatedState = mapping.onTick(state);
-                return {
-                  ...updatedState,
-                  activeSkillTask: { ...state.activeSkillTask, startTime: Date.now() },
-                };
-              });
-              saveState();
-            }, newState.activeSkillTask.interval);
-            newState.activeSkillTask.timerId = timerId;
-          }
-        }
-        set(newState);
-        saveState();
-        return ticks; // Optionally return the number of ticks processed
-      },        
+      }
+      set(newState);
+      saveState();
+      return ticks;
+    },
 
     setAutoSaveInterval: (newInterval) => {
       set((state) => {
@@ -306,19 +430,26 @@ const usePlayerStore = create((set, get) => {
     },
 
     gainGold: (amount) => {
+      // Calculate final gold amount first:
+      let goldMultiplier = 1;
+      Object.values(usePlayerStore.getState().equipped).forEach(item => {
+        if (item?.gold_multiplier) {
+          goldMultiplier *= item.gold_multiplier;
+        }
+      });
+      const finalGold = Math.floor(amount * goldMultiplier);
+    
+      // Now update gold in the state
       set((state) => {
-        let goldMultiplier = 1;
-        Object.values(state.equipped).forEach(item => {
-          if (item?.gold_multiplier) {
-            goldMultiplier *= item.gold_multiplier;
-          }
-        });
-        const finalGold = Math.floor(amount * goldMultiplier);
         const newGold = state.gold + finalGold;
-        saveState();
         return { gold: newGold };
       });
-    },
+      saveState();
+    
+      // Now update achievements outside of the set callback:
+      usePlayerStore.getState().updateAchievement("earn_1000_gold", finalGold);
+      usePlayerStore.getState().updateAchievement("earn_1000000_gold", finalGold);
+    },    
 
     spendGold: (amount) => {
       set((state) => {
@@ -405,7 +536,7 @@ const usePlayerStore = create((set, get) => {
 
     unequipItem: (slot) => {
       set((state) => {
-        const validTypes = ["head", "neck", "back", "chest", "legs", "feet", "hands", "weapon", "shield", "ring"];
+        const validTypes = ["head", "neck", "chest", "legs", "feet", "hands", "weapon", "shield", "ring"];
         if (!validTypes.includes(slot)) return state;
         const equippedItem = state.equipped[slot];
         if (!equippedItem) return state;
@@ -422,6 +553,41 @@ const usePlayerStore = create((set, get) => {
       });
       saveState();
     },
+
+    claimAchievementReward: (id) => {
+      set((state) => {
+        if (
+          !state.achievements[id] ||
+          !state.achievements[id].completed ||
+          state.achievements[id].claimed
+        ) {
+          console.log(`Achievement ${id} cannot be claimed.`);
+          return {};
+        }
+        const achievementDef = achievementsData[id];
+        // Grant the reward based on its type
+        if (achievementDef.reward.gold) {
+          state.gold += achievementDef.reward.gold;
+        }
+        if (achievementDef.reward.exp) {
+          state.exp += achievementDef.reward.exp;
+          // Alternatively, you might add this to a specific skill's XP.
+        }
+        if (achievementDef.reward.item) {
+          // For demonstration, add the item to inventory.
+          state.inventory.push({ id: achievementDef.reward.item, quantity: 1 });
+        }
+        console.log(`Reward for ${id} claimed!`, achievementDef.reward);
+        return {
+          achievements: {
+            ...state.achievements,
+            [id]: { ...state.achievements[id], claimed: true }
+          }
+        };
+      });
+      saveState();
+    }
+    // Add more here    
   };
 });
 

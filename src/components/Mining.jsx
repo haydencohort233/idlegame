@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import usePlayerStore from "../store/usePlayerStore";
 import rocksData from "../data/rocks.json";
 
@@ -7,19 +7,27 @@ const Mining = () => {
   const activeSkillTask = usePlayerStore((state) => state.activeSkillTask);
   const startSkillTask = usePlayerStore((state) => state.startSkillTask);
   const stopSkillTask = usePlayerStore((state) => state.stopSkillTask);
+  const updateAchievement = usePlayerStore((state) => state.updateAchievement);
   const currentLocation = usePlayerStore((state) => state.location);
+  const miningSkill = usePlayerStore((state) => state.skills.mining);
+
+  // Use useEffect to update achievement for reaching level 5 without causing side effects during render.
+  useEffect(() => {
+    if (miningSkill.level >= 5) {
+      updateAchievement("reach_level_5_mining", 0, miningSkill.level);
+    }
+  }, [miningSkill.level, updateAchievement]);
 
   // Filter rocks to only show those available in the current location
   const availableRocks = Object.keys(rocksData).filter(
     (rockId) => rocksData[rockId].locations.includes(currentLocation.toLowerCase())
   );
 
-  // Called when the player clicks a "Start Mining [Rock]" button.
+  // Called when the player clicks "Start Mining [Rock]" button.
   const handleStartMining = (rockId) => {
     const rock = rocksData[rockId];
     if (!rock) return;
-    
-    // Start the mining task with the new API.
+
     startSkillTask("mining", { rockId, interval: rock.interval });
     setSelectedRock(rock);
   };
@@ -51,8 +59,8 @@ const Mining = () => {
               const rock = rocksData[rockId];
               return (
                 <button key={rockId} className="mining-btn" onClick={() => handleStartMining(rockId)}>
-                  {rock.name}{" "}
                   {rock.image && <img src={rock.image} alt={rock.name} className="rock-icon" />}
+                  {rock.name}{" "}
                 </button>
               );
             })
