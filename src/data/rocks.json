@@ -3,18 +3,20 @@
     "id": "copper_rock",
     "name": "Copper Rock",
     "level_req": 1,
-    "exp": 500,
+    "exp": 50,
     "reward": "copper_ore",
     "interval": 5000,
-    "locations": ["lumbridge"]
+    "locations": ["lumbridge"],
+    "image": "/assets/images/rocks/copper_rock.png"
   },
   "iron_rock": {
     "id": "iron_rock",
     "name": "Iron Rock",
     "level_req": 2,
-    "exp": 750,
+    "exp": 80,
     "reward": "iron_ore",
     "interval": 5000,
-    "locations": ["dark_forest"]
+    "locations": ["dark_forest"],
+    "image": "/assets/images/rocks/iron_rock.png"
   }
 }

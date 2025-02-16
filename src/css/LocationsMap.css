@@ -23,3 +23,124 @@
     margin: 5px;
   }
   
+  /* src/css/LocationsMap.css */
+.open-map-btn {
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  background: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: rgb(36, 31, 31);
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  border: solid 1px white;
+}
+
+.map-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.current-location {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.locations-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.location-btn {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  background: rgb(34, 33, 33);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.location-btn:hover {
+  background: #eee;
+}
+
+.location-btn.selected {
+  background: #4a90e2;
+  color: white;
+}
+
+.location-preview {
+  margin-top: 15px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: #494343;
+}
+
+.location-image {
+  width: 25%;
+  height: auto;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.location-features {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.location-features li {
+  font-size: 14px;
+  padding: 5px 0;
+}
+
+.travel-btn {
+  margin-top: 10px;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.close-btn {
+  margin-top: 15px;
+  padding: 8px 12px;
+  font-size: 14px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.travel-btn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}

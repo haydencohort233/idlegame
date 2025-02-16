@@ -1,4 +1,3 @@
-// src/components/Mining.jsx
 import React, { useState } from "react";
 import usePlayerStore from "../store/usePlayerStore";
 import rocksData from "../data/rocks.json";
@@ -8,6 +7,12 @@ const Mining = () => {
   const activeSkillTask = usePlayerStore((state) => state.activeSkillTask);
   const startSkillTask = usePlayerStore((state) => state.startSkillTask);
   const stopSkillTask = usePlayerStore((state) => state.stopSkillTask);
+  const currentLocation = usePlayerStore((state) => state.location);
+
+  // Filter rocks to only show those available in the current location
+  const availableRocks = Object.keys(rocksData).filter(
+    (rockId) => rocksData[rockId].locations.includes(currentLocation.toLowerCase())
+  );
 
   // Called when the player clicks a "Start Mining [Rock]" button.
   const handleStartMining = (rockId) => {
@@ -28,6 +33,7 @@ const Mining = () => {
   return (
     <div>
       <h2>Mining</h2>
+
       {activeSkillTask ? (
         <div>
           <p>
@@ -39,11 +45,20 @@ const Mining = () => {
       ) : (
         <div>
           <p>Select a rock to mine:</p>
-          {Object.keys(rocksData).map((rockId) => (
-            <button key={rockId} onClick={() => handleStartMining(rockId)}>
-              Start Mining {rocksData[rockId].name}
-            </button>
-          ))}
+
+          {availableRocks.length > 0 ? (
+            availableRocks.map((rockId) => {
+              const rock = rocksData[rockId];
+              return (
+                <button key={rockId} className="mining-btn" onClick={() => handleStartMining(rockId)}>
+                  {rock.name}{" "}
+                  {rock.image && <img src={rock.image} alt={rock.name} className="rock-icon" />}
+                </button>
+              );
+            })
+          ) : (
+            <p>No rocks to mine here.</p>
+          )}
         </div>
       )}
     </div>

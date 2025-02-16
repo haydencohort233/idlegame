@@ -2,6 +2,7 @@
 import { create } from "zustand";
 import { getItem } from "../utils/itemUtils";
 import rocksData from "../data/rocks.json";
+import experienceData from "../data/experience.json";
 
 const defaultState = {
   name: "Player",
@@ -15,10 +16,10 @@ const defaultState = {
     health: 10 
   },
   skills: { 
-    mining: { level: 1, exp: 0 }, 
-    fishing: { level: 1, exp: 0 }, 
-    crafting: { level: 1, exp: 0 }, 
-    agility: { level: 1, exp: 0 }, 
+    mining: { level: 1, exp: 0, totalExp: 0 }, 
+    fishing: { level: 1, exp: 0, totalExp: 0 }, 
+    crafting: { level: 1, exp: 0, totalExp: 0 }, 
+    agility: { level: 1, exp: 0, totalExp: 0 }, 
   },
   inventory: [],
   inventoryCapacity: 30,
@@ -36,7 +37,7 @@ const defaultState = {
     ring: null,
   },
   buildings: {},
-  location: "Lumbridge",
+  location: "lumbridge",
   lastActive: Date.now(),
   autoSaveInterval: 30000, // 30 seconds
   // activeSkillTask will be stored as a serializable object:
@@ -89,21 +90,28 @@ const usePlayerStore = create((set, get) => {
     return newStats;
   };
 
-  const getExpThreshold = (level) => level * 1000;
+  const getExpThreshold = (level) => {
+    return experienceData[level] || (level * 1000); // Fallback if level is missing
+  };
 
   const mineTick = (state, rock) => {
     const currentMining = state.skills.mining;
-    const xpReward = rock.exp;
-    
-    // Add XP reward
+    const xpReward = rock.exp; // XP per tick
+  
     let newExp = currentMining.exp + xpReward;
+    let newTotalExp = (currentMining.totalExp || 0) + xpReward; // Never resets
+  
     let newLevel = currentMining.level;
-    while (newExp >= getExpThreshold(newLevel)) {
-      newExp -= getExpThreshold(newLevel);
-      newLevel++;
+  
+    // Check if the player has enough XP to level up
+    while (newTotalExp >= getExpThreshold(newLevel)) {
+      newLevel++; // Increase level
     }
   
-    // Award the resource
+    // Reset current level XP (exp) to match progress in the new level
+    let newExpForCurrentLevel = newTotalExp - getExpThreshold(newLevel - 1);
+  
+    // Award the ore (resource)
     const rewardItem = getItem(rock.reward);
     let updatedInventory = [...state.inventory];
     if (rewardItem) {
@@ -122,7 +130,8 @@ const usePlayerStore = create((set, get) => {
         ...state.skills,
         mining: {
           level: newLevel,
-          exp: newExp,
+          exp: newExpForCurrentLevel, // Resets per level but follows totalExp tracking
+          totalExp: newTotalExp, // Always increasing
         },
       },
     };
@@ -396,7 +405,7 @@ const usePlayerStore = create((set, get) => {
 
     unequipItem: (slot) => {
       set((state) => {
-        const validTypes = ["head", "neck", "chest", "legs", "feet", "hands", "weapon", "shield", "ring"];
+        const validTypes = ["head", "neck", "back", "chest", "legs", "feet", "hands", "weapon", "shield", "ring"];
         if (!validTypes.includes(slot)) return state;
         const equippedItem = state.equipped[slot];
         if (!equippedItem) return state;

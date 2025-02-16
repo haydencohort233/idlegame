@@ -5,9 +5,9 @@ function PlayerSkills() {
   
   return (
     <div>
-      {Object.entries(skills).map(([name, { level, exp }]) => (
+      {Object.entries(skills).map(([name, { level, totalExp = 0 }]) => (
         <p key={name}>
-          {name.charAt(0).toUpperCase() + name.slice(1)}: Level {level} Exp: {exp.toLocaleString()}
+          {name.charAt(0).toUpperCase() + name.slice(1)}: Level {level} | Total Exp: {totalExp.toLocaleString()}
         </p>
       ))}
     </div>

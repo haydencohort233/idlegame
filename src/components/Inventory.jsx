@@ -4,11 +4,13 @@ import items from "../data/items.json";
 import ItemActions from "./ItemActions";
 
 function Inventory() {
-  const { inventory } = usePlayerStore();
+  const { inventory, inventoryCapacity } = usePlayerStore(); // Get inventory & max capacity
+  const uniqueItemCount = inventory.length; // Count unique items
 
   return (
     <div>
-      <h2>Inventory</h2>
+      <h2>Inventory [{uniqueItemCount} / {inventoryCapacity}]</h2>
+      
       {inventory.length === 0 ? (
         <p>No items</p>
       ) : (

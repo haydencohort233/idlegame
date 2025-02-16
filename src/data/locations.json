@@ -3,9 +3,10 @@
     "id": "lumbridge",
     "name": "Lumbridge",
     "description": "A friendly town.",
+    "image": "/assets/images/locations/lumbridge.png",
     "features": {
       "mining": true,
-      "woodcutting": false,
+      "woodcutting": true,
       "fishing": true,
       "bank": true
     }
@@ -14,6 +15,7 @@
     "id": "dark_forest",
     "name": "Dark Forest",
     "description": "A mysterious forest.",
+    "image": "/assets/images/locations/varrock.png",
     "features": {
       "mining": true,
       "woodcutting": false,
