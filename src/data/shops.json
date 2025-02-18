@@ -1,0 +1,61 @@
+{
+    "lumbridge_general_store": {
+      "id": "lumbridge_general_store",
+      "name": "Lumbridge General Store",
+      "image": "/assets/images/shops/store.png",
+      "locations": ["lumbridge"],
+      "items": [
+        {
+          "id": "gold_ring",
+          "price": 100,
+          "stock": 10,
+          "restockInterval": 1000,
+          "description": "Restores 50 HP."
+        },
+        {
+          "id": "silver_necklace",
+          "price": 500,
+          "stock": 5,
+          "restockInterval": 60000,
+          "description": "A sturdy iron sword."
+        },
+        {
+          "id": "leather_boots",
+          "price": 500,
+          "stock": 3,
+          "restockInterval": 60000,
+          "description": "A sturdy iron sword."
+        },
+        {
+          "id": "leather_gloves",
+          "price": 500,
+          "stock": 3,
+          "restockInterval": 60000,
+          "description": "A sturdy iron sword."
+        },
+        {
+          "id": "robe_bottom",
+          "price": 500,
+          "stock": 1,
+          "restockInterval": 60000,
+          "description": "A sturdy iron sword."
+        }
+      ]
+    },
+    "dark_forest_armory": {
+      "id": "dark_forest_armory",
+      "name": "Dark Forest Armory",
+      "image": "/assets/images/shops/combat.png",
+      "locations": ["dark_forest"],
+      "items": [
+        {
+          "id": "leather_helmet",
+          "price": 700,
+          "stock": 3,
+          "restockInterval": 60000,
+          "description": "A heavy steel axe."
+        }
+      ]
+    }
+  }
+  

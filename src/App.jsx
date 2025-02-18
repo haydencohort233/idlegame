@@ -9,6 +9,7 @@ import Mining from "./components/Mining";
 import LocationsMap from "./components/LocationsMap";
 import locationsData from "./data/locations.json";
 import Achievements from "./components/Achievements";
+import ShopList from "./components/ShopList";
 
 function App() {
     const handleOfflineEarnings = usePlayerStore((state) => state.handleOfflineEarnings);
@@ -40,7 +41,8 @@ function App() {
         <div>
             {offlineGoldMessage && <p>{offlineGoldMessage}</p>}
             <PlayerStats />
-            <PlayerSkills />
+            {/*<PlayerSkills />*/}
+            <ShopList />
 
             {/* Conditionally render based on location features */}
             {currentLocationData.features?.mining && <Mining />}
