@@ -2,10 +2,10 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    background: #008cba;
+    background: #7e8b09;
     color: white;
     font-size: 14px;
-    padding: 8px 12px;
+    padding: 5px 8px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -13,7 +13,7 @@
   }
   
   .mining-btn:hover {
-    background: #eee;
+    background: #9dad0b;
   }
   
   .rock-icon {

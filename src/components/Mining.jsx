@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import usePlayerStore from "../store/usePlayerStore";
 import rocksData from "../data/rocks.json";
+import '../css/Mining.css';
 
 const Mining = () => {
   const [selectedRock, setSelectedRock] = useState(null);
