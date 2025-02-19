@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import usePlayerStore from "./store/usePlayerStore";
 import PlayerStats from "./components/PlayerStats";
-import Actions from "./components/Actions";
 import Inventory from "./components/Inventory";
 import Equipment from "./components/Equipment";
 import PlayerSkills from "./components/PlayerSkills";
@@ -10,50 +9,83 @@ import LocationsMap from "./components/LocationsMap";
 import locationsData from "./data/locations.json";
 import Achievements from "./components/Achievements";
 import ShopList from "./components/ShopList";
+import Statistics from "./components/Statistics";
+import "./css/TabNav.css";
 
 function App() {
-    const handleOfflineEarnings = usePlayerStore((state) => state.handleOfflineEarnings);
-    const handleOfflineSkillProgression = usePlayerStore((state) => state.handleOfflineSkillProgression);
-    const gainGold = usePlayerStore((state) => state.gainGold);
-    const location = usePlayerStore((state) => state.location);
-    const [offlineGoldMessage, setOfflineGoldMessage] = useState("");
-    
-    // Get current location data from JSON
-    const currentLocationData = locationsData[location] || {};
+  const handleOfflineEarnings = usePlayerStore((state) => state.handleOfflineEarnings);
+  const handleOfflineSkillProgression = usePlayerStore((state) => state.handleOfflineSkillProgression);
+  const gainGold = usePlayerStore((state) => state.gainGold);
+  const location = usePlayerStore((state) => state.location);
+  const [offlineGoldMessage, setOfflineGoldMessage] = useState("");
+  const [currentTab, setCurrentTab] = useState("home");
 
-    useEffect(() => {
-        // Process offline gold earnings
-        const goldGained = handleOfflineEarnings();
-        // Optionally show a message if gold was gained
-        // Process any active mining (or other skills) offline progress
-        const offlineTicks = handleOfflineSkillProgression();
-        //console.log(`Offline mining progress processed ${offlineTicks} ticks.`);
-    
-        // Set up any intervals (for online passive progression, etc.)
-        const interval = setInterval(() => {
-          gainGold(10);
-        }, 1000);
-    
-        return () => clearInterval(interval);
-    }, [handleOfflineEarnings, handleOfflineSkillProgression, gainGold]);
+  // Get current location data from JSON
+  const currentLocationData = locationsData[location] || {};
 
-    return (
-        <div>
-            {offlineGoldMessage && <p>{offlineGoldMessage}</p>}
-            <PlayerStats />
-            {/*<PlayerSkills />*/}
-            <ShopList />
+  useEffect(() => {
+    const goldGained = handleOfflineEarnings();
+    const offlineTicks = handleOfflineSkillProgression();
+    const interval = setInterval(() => {
+      gainGold(10);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [handleOfflineEarnings, handleOfflineSkillProgression, gainGold]);
 
-            {/* Conditionally render based on location features */}
-            {currentLocationData.features?.mining && <Mining />}
+  return (
+    <div>
+      {/* Tab Navigation */}
+      <nav className="tab-nav">
+        <button 
+          className={currentTab === "home" ? "active" : ""}
+          onClick={() => setCurrentTab("home")}
+        >
+          Home
+        </button>
+        <button 
+          className={currentTab === "skills" ? "active" : ""}
+          onClick={() => setCurrentTab("skills")}
+        >
+          Skills
+        </button>
+        <button 
+          className={currentTab === "achievements" ? "active" : ""}
+          onClick={() => setCurrentTab("achievements")}
+        >
+          Achievements
+        </button>
+        <button 
+          className={currentTab === "stats" ? "active" : ""}
+          onClick={() => setCurrentTab("stats")}
+        >
+          Statistics
+        </button>
+      </nav>
+      
+      {offlineGoldMessage && <p>{offlineGoldMessage}</p>}
+      
+      {currentTab === "home" && (
+        <>
+        <PlayerStats />
+          <ShopList />
+          {currentLocationData.features?.mining && <Mining />}
+          <LocationsMap />
+          <Inventory />
+          <Equipment />
+        </>
+      )}
 
-            <LocationsMap />
-            <Actions />
-            <Inventory />
-            <Equipment />
-            <Achievements />
-        </div>
-    );
+        {currentTab === "skills" && (
+            <>
+            <PlayerSkills />
+            </>
+    )}
+      
+      {currentTab === "stats" && <Statistics />}
+
+      {currentTab === "achievements" && <Achievements />}
+    </div>
+  );
 }
 
 export default App;

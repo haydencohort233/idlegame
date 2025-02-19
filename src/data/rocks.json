@@ -18,5 +18,35 @@
     "interval": 5000,
     "locations": ["dark_forest"],
     "image": "/assets/images/rocks/iron_rock.png"
+  },
+  "gold_rock": {
+    "id": "gold_rock",
+    "name": "Gold Rock",
+    "level_req": 5,
+    "exp": 100,
+    "reward": "gold_ore",
+    "interval": 5000,
+    "locations": ["lumbridge"],
+    "image": "/assets/images/rocks/gold_rock.png"
+  },
+  "mithril_rock": {
+    "id": "mithril_rock",
+    "name": "Mithril Rock",
+    "level_req": 8,
+    "exp": 150,
+    "reward": "mithril_ore",
+    "interval": 5000,
+    "locations": ["dark_forest"],
+    "image": "/assets/images/rocks/mithril_rock.png"
+  },
+  "runite_rock": {
+    "id": "runite_rock",
+    "name": "Runite Rock",
+    "level_req": 10,
+    "exp": 200,
+    "reward": "runite_ore",
+    "interval": 5000,
+    "locations": ["lumbridge"],
+    "image": "/assets/images/rocks/runite_rock.png"
   }
 }

@@ -14,7 +14,11 @@ const defaultState = {
     attack: 1, 
     defence: 1, 
     magic: 1, 
-    health: 10 
+    health: 10, 
+    speed: 1,
+    criticalChance: 10,
+    criticalMultiplier: 1.5,
+    accuracy: 100
   },
   skills: { 
     mining: { level: 1, exp: 0, totalExp: 0 }, 
@@ -46,9 +50,17 @@ const defaultState = {
   achievements: Object.keys(achievementsData).reduce((acc, key) => {
     acc[key] = { progress: 0, completed: false, claimed: false };
     return acc;
-  }, {})
+  }, {}),
   // activeSkillTask will be stored as a serializable object:
   // { timerId, taskKey, taskData, startTime, interval }
+  playerStats: {
+    totalGoldEarned: 0,
+    totalGoldSpent: 0,
+    totalItemsPurchased: 0,
+    totalDeaths: 0,
+    totalOresMined: 0,
+    totalOresMined: 0,
+  }
 };
 
 const savedState = JSON.parse(localStorage.getItem("playerState")) || {};
@@ -105,55 +117,51 @@ const usePlayerStore = create((set, get) => {
   const mineTick = (state, rock) => {
     const currentMining = state.skills.mining;
     const xpReward = rock.exp; // XP per tick
-  
+    
     let newExp = currentMining.exp + xpReward;
     let newTotalExp = (currentMining.totalExp || 0) + xpReward; // Never resets
-  
+    
     let newLevel = currentMining.level;
-  
-    // Level up while total XP meets the threshold.
     while (newTotalExp >= getExpThreshold(newLevel)) {
       newLevel++;
     }
-  
+    
     // Current XP resets to show progress within the current level.
     let newExpForCurrentLevel = newTotalExp - getExpThreshold(newLevel - 1);
-  
+    
     // Award the ore (resource)
     const rewardItem = getItem(rock.reward);
     let updatedInventory = [...state.inventory];
     if (rewardItem) {
-      const existingItem = updatedInventory.find((i) => i.id === rewardItem.id);
+      const existingItem = updatedInventory.find(i => i.id === rewardItem.id);
       if (existingItem) {
         existingItem.quantity = Math.min((existingItem.quantity || 0) + 1, 999);
       } else {
         updatedInventory.push({ ...rewardItem, quantity: 1 });
       }
     }
-  
-    // Update achievements inline:
+    
+    // Update playerStats: Increase totalOresMined by 1.
+    const newPlayerStats = {
+      ...state.playerStats,
+      totalOresMined: (state.playerStats.totalOresMined || 0) + 1
+    };
+    
+    // (Achievement updates as before, omitted here for brevity)
     const prevOreProgress = state.achievements.mine_100_ores?.progress || 0;
     const newOreProgress = prevOreProgress + 1;
     const oreCompleted = newOreProgress >= achievementsData.mine_100_ores.goal;
-  
-    // For reach_level_5_mining, we simply use the new level.
     const levelAchieved = newLevel;
     const levelCompleted = levelAchieved >= achievementsData.reach_level_5_mining.goal;
-  
+    
     const newAchievements = {
       ...state.achievements,
-      mine_100_ores: {
-        progress: newOreProgress,
-        completed: oreCompleted,
-      },
-      reach_level_5_mining: {
-        progress: levelAchieved,
-        completed: levelCompleted,
-      },
+      mine_100_ores: { progress: newOreProgress, completed: oreCompleted },
+      reach_level_5_mining: { progress: levelAchieved, completed: levelCompleted }
     };
-  
+    
     console.log("[mineTick] Updated achievements:", newAchievements);
-  
+    
     return {
       ...state,
       inventory: updatedInventory,
@@ -162,10 +170,11 @@ const usePlayerStore = create((set, get) => {
         mining: {
           level: newLevel,
           exp: newExpForCurrentLevel,
-          totalExp: newTotalExp,
-        },
+          totalExp: newTotalExp
+        }
       },
       achievements: newAchievements,
+      playerStats: newPlayerStats
     };
   };  
 
@@ -430,7 +439,7 @@ const usePlayerStore = create((set, get) => {
     },
 
     gainGold: (amount) => {
-      // Calculate final gold amount first:
+      // Calculate final gold amount with multipliers.
       let goldMultiplier = 1;
       Object.values(usePlayerStore.getState().equipped).forEach(item => {
         if (item?.gold_multiplier) {
@@ -438,15 +447,21 @@ const usePlayerStore = create((set, get) => {
         }
       });
       const finalGold = Math.floor(amount * goldMultiplier);
-    
-      // Now update gold in the state
+      
+      // Update gold and totalGoldEarned.
       set((state) => {
         const newGold = state.gold + finalGold;
-        return { gold: newGold };
+        return { 
+          gold: newGold,
+          playerStats: {
+            ...state.playerStats,
+            totalGoldEarned: state.playerStats.totalGoldEarned + finalGold
+          }
+        };
       });
       saveState();
-    
-      // Now update achievements outside of the set callback:
+      
+      // Update achievements (as before)
       usePlayerStore.getState().updateAchievement("earn_1000_gold", finalGold);
       usePlayerStore.getState().updateAchievement("earn_1000000_gold", finalGold);
     },    
@@ -454,10 +469,16 @@ const usePlayerStore = create((set, get) => {
     spendGold: (amount) => {
       set((state) => {
         const newGold = Math.max(state.gold - amount, 0);
-        saveState();
-        return { gold: newGold };
+        return { 
+          gold: newGold,
+          playerStats: {
+            ...state.playerStats,
+            totalGoldSpent: state.playerStats.totalGoldSpent + amount
+          }
+        };
       });
-    },
+      saveState();
+    },    
 
     travel: (newLocation) => {
       set({ location: newLocation });
@@ -473,6 +494,16 @@ const usePlayerStore = create((set, get) => {
       saveState();
       return totalGold;
     },
+
+    updatePlayerStats: (statKey, increment = 1) => {
+      set((state) => ({
+        playerStats: {
+          ...state.playerStats,
+          [statKey]: (state.playerStats[statKey] || 0) + increment
+        }
+      }));
+      saveState();
+    },    
 
     addItem: (itemId) => {
       const item = getItem(itemId);

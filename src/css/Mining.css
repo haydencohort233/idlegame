@@ -1,24 +1,30 @@
 .mining-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: #7e8b09;
-    color: white;
-    font-size: 14px;
-    padding: 5px 8px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  
-  .mining-btn:hover {
-    background: #9dad0b;
-  }
-  
-  .rock-icon {
-    width: 16px;
-    height: 16px;
-    object-fit: contain;
-  }
-  
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #7e8b09;
+  color: white;
+  font-size: 14px;
+  padding: 5px 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.mining-btn:hover {
+  background: #9dad0b;
+}
+
+.rock-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+/* New style for the active mining image */
+.active-mining-image {
+  width: 32px; /* adjust size as needed */
+  height: auto;
+  margin-bottom: 10px;
+}

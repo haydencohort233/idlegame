@@ -54,16 +54,20 @@ function Shop({ shopData }) {
     spendGold(selectedItem.price);
     addItem(selectedItem.id);
   
-    // Update stock and keep the preview panel open
-    setShopStock(prev => {
-      const updatedStock = Math.max(prev[selectedItem.id] - 1, 0);
-      return { ...prev, [selectedItem.id]: updatedStock };
-    });
+    // Update shop stock while keeping the preview panel open
+    setShopStock(prev => ({
+      ...prev,
+      [selectedItem.id]: Math.max(prev[selectedItem.id] - 1, 0)
+    }));
   
-    // Keep the selected item in view but update its stock
-    setSelectedItem(prevItem => prevItem ? { ...prevItem, stock: shopStock[prevItem.id] - 1 } : null);
+    // Update player's totalItemsPurchased stat
+    usePlayerStore.getState().updatePlayerStats("totalItemsPurchased", 1);
+  
+    // Keep the preview panel open but update its local stock value
+    setSelectedItem(prevItem =>
+      prevItem ? { ...prevItem, stock: shopStock[prevItem.id] - 1 } : null
+    );
   };
-  
 
   const handleCancel = () => {
     setSelectedItem(null);

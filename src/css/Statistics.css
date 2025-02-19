@@ -1,0 +1,19 @@
+.statistics-container {
+    padding: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .statistics-container h2 {
+    margin-bottom: 12px;
+  }
+  
+  .statistics-container ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .statistics-container li {
+    margin-bottom: 8px;
+  }
+  
