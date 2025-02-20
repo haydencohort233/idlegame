@@ -1,0 +1,26 @@
+{
+    "small_pond": {
+      "id": "small_pond",
+      "name": "Small Pond",
+      "level_req": 1,
+      "exp": 40,
+      "reward": "raw_shrimps",
+      "interval": 5000,
+      "locations": ["lumbridge"],
+      "requiredTool": "fishing_net",
+      "image": "/assets/images/locations/small_lake.png"
+    },
+    "big_lake": {
+      "id": "big_lake",
+      "name": "Big Lake",
+      "level_req": 1,
+      "exp": 80,
+      "reward": "raw_shark",
+      "interval": 7000,
+      "locations": ["dark_forest"],
+      "requiredTool": "fishing_rod",
+      "requiredBait": "fishing_bait",
+      "image": "/assets/images/locations/small_lake.png"
+    }
+  }
+  

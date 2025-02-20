@@ -19,7 +19,7 @@
     "features": {
       "mining": true,
       "woodcutting": false,
-      "fishing": false,
+      "fishing": true,
       "bank": false
     }
   }

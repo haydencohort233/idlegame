@@ -6,10 +6,31 @@
       "locations": ["lumbridge"],
       "items": [
         {
-          "id": "silver_necklace",
+          "id": "fishing_net",
           "price": 500,
           "stock": 5,
           "restockInterval": 60000,
+          "description": "A sturdy iron sword."
+        },
+        {
+          "id": "lobster_pot",
+          "price": 500,
+          "stock": 5,
+          "restockInterval": 60000,
+          "description": "A sturdy iron sword."
+        },
+        {
+          "id": "fishing_rod",
+          "price": 500,
+          "stock": 5,
+          "restockInterval": 60000,
+          "description": "A sturdy iron sword."
+        },
+        {
+          "id": "fishing_bait",
+          "price": 500,
+          "stock": 100,
+          "restockInterval": 1000,
           "description": "A sturdy iron sword."
         }
       ]

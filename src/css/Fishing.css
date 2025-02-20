@@ -1,0 +1,30 @@
+.fishing-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #0f1ab9;
+    color: white;
+    font-size: 14px;
+    padding: 5px 8px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .fishing-btn:hover {
+    background: #040946;
+  }
+  
+  .fishing-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+  }
+  
+  .active-fishing-image {
+    width: 32px;
+    height: auto;
+    margin-bottom: 10px;
+  }
+  

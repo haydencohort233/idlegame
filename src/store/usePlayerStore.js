@@ -2,6 +2,7 @@
 import { create } from "zustand";
 import { getItem } from "../utils/itemUtils";
 import rocksData from "../data/rocks.json";
+import fishingSpotsData from "../data/fishingSpots.json";
 import experienceData from "../data/experience.json";
 import achievementsData from "../data/achievements.json";
 
@@ -59,7 +60,7 @@ const defaultState = {
     totalItemsPurchased: 0,
     totalDeaths: 0,
     totalOresMined: 0,
-    totalOresMined: 0,
+    totalFishCaught: 0,
   }
 };
 
@@ -114,12 +115,80 @@ const usePlayerStore = create((set, get) => {
     return experienceData[level] || (level * 1000); // Fallback if level is missing
   };
 
+  const fishTick = (state, spot) => {
+    const currentFishing = state.skills.fishing;
+    const xpReward = spot.exp; // XP per tick for fishing
+    const rewardId = spot.reward; // e.g. "raw_tuna" or "raw_shark"
+    const currentCount = state.resourceGatherCounts[rewardId] || 0;
+    const updatedCounts = {
+      ...state.resourceGatherCounts,
+      [rewardId]: currentCount + 1,
+    };
+  
+    let newExp = currentFishing.exp + xpReward;
+    let newTotalExp = (currentFishing.totalExp || 0) + xpReward;
+    let newLevel = currentFishing.level;
+    while (newTotalExp >= getExpThreshold(newLevel)) {
+      newLevel++;
+    }
+    let newExpForCurrentLevel = newTotalExp - getExpThreshold(newLevel - 1);
+  
+    // Award the fish resource
+    const rewardItem = getItem(spot.reward);
+    let updatedInventory = [...state.inventory];
+    if (rewardItem) {
+      const existingItem = updatedInventory.find(i => i.id === rewardItem.id);
+      if (existingItem) {
+        existingItem.quantity = Math.min((existingItem.quantity || 0) + 1, 999);
+      } else {
+        updatedInventory.push({ ...rewardItem, quantity: 1 });
+      }
+    }
+
+    const newPlayerStats = {
+      ...state.playerStats,
+      totalFishCaught: (state.playerStats.totalFishCaught || 0) + 1,
+    };
+
+    const prevFishProgress = state.achievements.catch_100_fish?.progress || 0;
+    const newFishProgress = prevFishProgress + 1;
+    const fishCompleted = newFishProgress >= 100;
+    const levelCompleted = newLevel >= 5;
+    const newAchievements = {
+      ...state.achievements,
+      catch_100_fish: { progress: newFishProgress, completed: fishCompleted },
+      reach_level_5_fishing: { progress: newLevel, completed: levelCompleted },
+    };
+  
+    return {
+      ...state,
+      resourceGatherCounts: updatedCounts,
+      inventory: updatedInventory,
+      skills: {
+        ...state.skills,
+        fishing: {
+          level: newLevel,
+          exp: newExpForCurrentLevel,
+          totalExp: newTotalExp,
+        },
+      },
+      achievements: newAchievements,
+      playerStats: newPlayerStats,
+    };
+  };
+
   const mineTick = (state, rock) => {
     const currentMining = state.skills.mining;
     const xpReward = rock.exp; // XP per tick
+    const rewardId = rock.reward; // e.g. "copper_ore"
+    const currentCount = state.resourceGatherCounts[rewardId] || 0;
+    const updatedCounts = {
+      ...state.resourceGatherCounts,
+      [rewardId]: currentCount + 1,
+    };
     
     let newExp = currentMining.exp + xpReward;
-    let newTotalExp = (currentMining.totalExp || 0) + xpReward; // Never resets
+    let newTotalExp = (currentMining.totalExp || 0) + xpReward;
     
     let newLevel = currentMining.level;
     while (newTotalExp >= getExpThreshold(newLevel)) {
@@ -164,6 +233,7 @@ const usePlayerStore = create((set, get) => {
     
     return {
       ...state,
+      resourceGatherCounts: updatedCounts,
       inventory: updatedInventory,
       skills: {
         ...state.skills,
@@ -228,6 +298,58 @@ const usePlayerStore = create((set, get) => {
           if (state.inventory.length >= state.inventoryCapacity) return false;
           // Stop if the player is not in one of the rock's allowed locations
           if (!rock.locations.includes(state.location.toLowerCase())) return false;
+          return true;
+        }
+      };
+    },
+    fishing: (taskData) => {
+      const spot = fishingSpotsData[taskData.spotId];
+      return {
+        onTick: (state) => {
+          // Check if a tool is required and present.
+          if (spot.requiredTool) {
+            const hasTool =
+              state.inventory.some(i => i.id === spot.requiredTool) ||
+              Object.values(state.equipped).some(item => item && item.id === spot.requiredTool);
+            if (!hasTool) {
+              console.warn(`Missing required tool: ${spot.requiredTool}`);
+              return state;
+            }
+          }
+          // Check if bait is required and remove one unit if available.
+          if (spot.requiredBait) {
+            const baitIndex = state.inventory.findIndex(i => i.id === spot.requiredBait);
+            if (baitIndex === -1) {
+              console.warn(`Missing required bait: ${spot.requiredBait}`);
+              return state;
+            } else {
+              // Remove one bait unit.
+              const updatedInventory = [...state.inventory];
+              updatedInventory[baitIndex].quantity -= 1;
+              if (updatedInventory[baitIndex].quantity <= 0) {
+                updatedInventory.splice(baitIndex, 1);
+              }
+              state.inventory = updatedInventory;
+            }
+          }
+          return fishTick(state, spot);
+        },
+        condition: (state) => {
+          // Stop if inventory is full.
+          if (state.inventory.length >= state.inventoryCapacity) return false;
+          // Stop if the player is not in one of the spot’s allowed locations.
+          if (!spot.locations.includes(state.location.toLowerCase())) return false;
+          // Check required tool.
+          if (spot.requiredTool) {
+            const hasTool =
+              state.inventory.some(i => i.id === spot.requiredTool) ||
+              Object.values(state.equipped).some(item => item && item.id === spot.requiredTool);
+            if (!hasTool) return false;
+          }
+          // Check required bait.
+          if (spot.requiredBait) {
+            if (!state.inventory.some(i => i.id === spot.requiredBait)) return false;
+          }
           return true;
         }
       };
@@ -324,7 +446,10 @@ const usePlayerStore = create((set, get) => {
     updateAchievement,
     // Start a skill task using a serializable taskKey and taskData.
     startSkillTask: (taskKey, taskData) => {
-      if (get().activeSkillTask) return; // Only one active task at a time.
+      // Cancel any currently active task
+      if (get().activeSkillTask) {
+        get().stopSkillTask();
+      }
       if (!taskMappings[taskKey] || typeof taskMappings[taskKey] !== "function") {
         console.warn(`No mapping for task key: ${taskKey}`);
         return;
@@ -338,10 +463,17 @@ const usePlayerStore = create((set, get) => {
         }
         set((state) => {
           const newState = mapping.onTick(state);
-          // Update achievements after each tick:
-          usePlayerStore.getState().updateAchievement("mine_100_ores", 1);
-          if (newState.skills.mining.level >= 5) {
-            usePlayerStore.getState().updateAchievement("reach_level_5_mining", 0, newState.skills.mining.level);
+          // Update achievements conditionally based on taskKey
+          if (taskKey === "mining") {
+            usePlayerStore.getState().updateAchievement("mine_100_ores", 1);
+            if (newState.skills.mining.level >= 5) {
+              usePlayerStore.getState().updateAchievement("reach_level_5_mining", 0, newState.skills.mining.level);
+            }
+          } else if (taskKey === "fishing") {
+            usePlayerStore.getState().updateAchievement("catch_100_fish", 1);
+            if (newState.skills.fishing.level >= 5) {
+              usePlayerStore.getState().updateAchievement("reach_level_5_fishing", 0, newState.skills.fishing.level);
+            }
           }
           return {
             ...newState,

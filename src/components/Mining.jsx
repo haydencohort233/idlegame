@@ -1,3 +1,4 @@
+// src/components/Mining.jsx
 import React, { useState, useEffect } from "react";
 import usePlayerStore from "../store/usePlayerStore";
 import activeMiningGif from "/assets/images/icons/active-mining.gif";
@@ -22,17 +23,17 @@ const Mining = () => {
     }
   }, [miningSkill.level, updateAchievement]);
 
-  // Timer to update elapsed time every second (when a mining task is active)
+  // Timer to update elapsed time every second only when a mining task is active.
   useEffect(() => {
-    if (activeSkillTask) {
+    if (activeSkillTask && activeSkillTask.taskKey === "mining") {
       const intervalId = setInterval(() => {
-        setDummy(prev => prev + 1);
+        setDummy((prev) => prev + 1);
       }, 1000);
       return () => clearInterval(intervalId);
     }
   }, [activeSkillTask]);
 
-  // Filter rocks to only show those available in the current location
+  // Filter rocks to only show those available in the current location.
   const availableRocks = Object.keys(rocksData).filter(
     (rockId) => rocksData[rockId].locations.includes(currentLocation.toLowerCase())
   );
@@ -52,16 +53,14 @@ const Mining = () => {
     setSelectedRock(null);
   };
 
-  // Active image for mining skill (update the path as needed)
+  // Active image for mining skill.
   const activeImages = {
     mining: activeMiningGif,
-  };  
+  };
 
   return (
     <div>
-      <h2>Mining</h2>
-
-      {activeSkillTask ? (
+      {activeSkillTask && activeSkillTask.taskKey === "mining" ? (
         <div>
           <img
             src={activeImages.mining}
@@ -76,7 +75,6 @@ const Mining = () => {
         </div>
       ) : (
         <div>
-          <p>Select a rock to mine:</p>
           {availableRocks.length > 0 ? (
             availableRocks.map((rockId) => {
               const rock = rocksData[rockId];

@@ -121,12 +121,68 @@
         "value": 50,
         "image": "/assets/images/items/armor/wooden_shield.png"
     },
-    "health_potion": {
-      "id": "health_potion",
-      "name": "Health Potion",
+    "fishing_net": {
+      "id": "fishing_net",
+      "name": "Fishing Net",
       "type": "consumable",
       "heal": 20,
       "value": 5,
-      "image": "/assets/images/items/potions/health_potion.png"
+      "image": "/assets/images/items/fishing/fishing_net.png"
+    },
+    "fishing_rod": {
+        "id": "fishing_rod",
+        "name": "Fishing Rod",
+        "type": "consumable",
+        "heal": 20,
+        "value": 5,
+        "image": "/assets/images/items/fishing/fishing_rod.png"
+    },
+    "fishing_bait": {
+      "id": "fishing_bait",
+      "name": "Fishing Bait",
+      "type": "consumable",
+      "heal": 20,
+      "value": 5,
+      "image": "/assets/images/items/fishing/fishing_bait.png"
+    },
+    "lobster_pot": {
+      "id": "lobster_pot",
+      "name": "Lobster Pot",
+      "type": "consumable",
+      "heal": 20,
+      "value": 5,
+      "image": "/assets/images/items/fishing/lobster_pot.png"
+    },
+    "raw_tuna": {
+        "id": "raw_tuna",
+        "name": "Raw Tuna",
+        "type": "consumable",
+        "heal": 20,
+        "value": 5,
+        "image": "/assets/images/items/fishing/raw_tuna.png"
+    },
+    "raw_shark": {
+        "id": "raw_shark",
+        "name": "Raw Shark",
+        "type": "consumable",
+        "heal": 20,
+        "value": 5,
+        "image": "/assets/images/items/fishing/raw_shark.png"
+    },
+    "raw_shrimps": {
+        "id": "raw_shrimps",
+        "name": "Raw Shrimps",
+        "type": "consumable",
+        "heal": 20,
+        "value": 5,
+        "image": "/assets/images/items/fishing/raw_shrimps.png"
+    },
+    "feathers": {
+      "id": "feathers",
+      "name": "Feathers",
+      "type": "consumable",
+      "heal": 20,
+      "value": 5,
+      "image": "/assets/images/items/fishing/feathers.png"
     }
 }
