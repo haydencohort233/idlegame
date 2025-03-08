@@ -74,7 +74,7 @@ const Mining = () => {
           <button onClick={handleStopMining}>Stop Mining</button>
         </div>
       ) : (
-        <div>
+        <div className="button-container">
           {availableRocks.length > 0 ? (
             availableRocks.map((rockId) => {
               const rock = rocksData[rockId];

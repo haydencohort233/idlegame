@@ -6,6 +6,20 @@
       "locations": ["lumbridge"],
       "items": [
         {
+          "id": "bronze_axe",
+          "price": 1000,
+          "stock": 5,
+          "restockInterval": 60000,
+          "description": "A soft pickaxe. This will have to work."
+        },
+        {
+          "id": "dragon_axe",
+          "price": 1000,
+          "stock": 5,
+          "restockInterval": 60000,
+          "description": "A soft pickaxe. This will have to work."
+        },
+        {
           "id": "bronze_pickaxe",
           "price": 1000,
           "stock": 5,

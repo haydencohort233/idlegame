@@ -1,0 +1,33 @@
+{
+    "regular_tree": {
+      "id": "regular_tree",
+      "name": "Regular Tree",
+      "level_req": 1,
+      "exp": 50,
+      "reward": "regular_logs",
+      "interval": 9000,
+      "locations": ["lumbridge"],
+      "image": "/assets/images/trees/regular_tree.png"
+    },
+    "oak_tree": {
+      "id": "oak_tree",
+      "name": "Oak Tree",
+      "level_req": 1,
+      "exp": 80,
+      "reward": "oak_logs",
+      "interval": 8000,
+      "locations": ["lumbridge", "dark_forest"],
+      "image": "/assets/images/trees/oak_tree.png"
+    },
+    "maple_tree": {
+      "id": "maple_tree",
+      "name": "Maple Tree",
+      "level_req": 20,
+      "exp": 120,
+      "reward": "maple_logs",
+      "interval": 10000,
+      "locations": ["varrock", "draynor"],
+      "image": "/assets/images/trees/maple_tree.png"
+    }
+  }
+  

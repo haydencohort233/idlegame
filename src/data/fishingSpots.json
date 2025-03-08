@@ -17,7 +17,7 @@
       "exp": 80,
       "reward": "raw_shark",
       "interval": 7000,
-      "locations": ["dark_forest"],
+      "locations": ["lumbridge", "dark_forest"],
       "requiredTool": "fishing_rod",
       "requiredBait": "fishing_bait",
       "image": "/assets/images/locations/small_lake.png"

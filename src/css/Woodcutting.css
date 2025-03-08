@@ -1,0 +1,35 @@
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.woodcutting-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #8b4513; /* A wood-like brown */
+    color: white;
+    font-size: 14px;
+    padding: 5px 8px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .woodcutting-btn:hover {
+    background: #a0522d;
+  }
+  
+  .tree-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+  }
+  
+  .active-woodcutting-image {
+    width: 32px;
+    height: auto;
+    margin-bottom: 10px;
+  }
+  

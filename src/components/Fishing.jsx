@@ -89,7 +89,7 @@ const Fishing = () => {
           <button onClick={handleStopFishing}>Stop Fishing</button>
         </div>
       ) : (
-        <div>
+        <div className="button-container">
           {availableSpots.length > 0 ? (
             availableSpots.map((spotId) => {
               const spot = fishingSpotsData[spotId];

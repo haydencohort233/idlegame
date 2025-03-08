@@ -2,6 +2,7 @@
 import { create } from "zustand";
 import { getItem } from "../utils/itemUtils";
 import rocksData from "../data/rocks.json";
+import treesData from "../data/trees.json";
 import fishingSpotsData from "../data/fishingSpots.json";
 import experienceData from "../data/experience.json";
 import achievementsData from "../data/achievements.json";
@@ -25,7 +26,8 @@ const defaultState = {
     mining: { level: 1, exp: 0, totalExp: 0 }, 
     fishing: { level: 1, exp: 0, totalExp: 0 }, 
     crafting: { level: 1, exp: 0, totalExp: 0 }, 
-    agility: { level: 1, exp: 0, totalExp: 0 } 
+    agility: { level: 1, exp: 0, totalExp: 0 },
+    woodcutting: { level: 1, exp: 0, totalExp: 0 } 
   },
   inventory: [],
   inventoryCapacity: 30,
@@ -62,6 +64,7 @@ const defaultState = {
     totalDeaths: 0,
     totalOresMined: 0,
     totalFishCaught: 0,
+    totalLogsCut: 0
   }
 };
 
@@ -115,6 +118,56 @@ const usePlayerStore = create((set, get) => {
   const getExpThreshold = (level) => {
     return experienceData[level] || (level * 1000); // Fallback if level is missing
   };
+
+  const woodcutTick = (state, tree) => {
+    const currentWoodcutting = state.skills.woodcutting;
+    const xpReward = tree.exp;
+    const rewardId = tree.reward; // e.g., "oak_logs"
+    const currentCount = state.resourceGatherCounts[rewardId] || 0;
+    const updatedCounts = {
+      ...state.resourceGatherCounts,
+      [rewardId]: currentCount + 1,
+    };
+  
+    let newExp = currentWoodcutting.exp + xpReward;
+    let newTotalExp = (currentWoodcutting.totalExp || 0) + xpReward;
+    let newLevel = currentWoodcutting.level;
+    while (newTotalExp >= getExpThreshold(newLevel)) {
+      newLevel++;
+    }
+    let newExpForCurrentLevel = newTotalExp - getExpThreshold(newLevel - 1);
+  
+    const rewardItem = getItem(tree.reward);
+    let updatedInventory = [...state.inventory];
+    if (rewardItem) {
+      const existingItem = updatedInventory.find(i => i.id === rewardItem.id);
+      if (existingItem) {
+        existingItem.quantity = Math.min((existingItem.quantity || 0) + 1, 999);
+      } else {
+        updatedInventory.push({ ...rewardItem, quantity: 1 });
+      }
+    }
+
+    const newPlayerStats = {
+      ...state.playerStats,
+      totalLogsCut: (state.playerStats.totalLogsCut || 0) + 1,
+    };
+  
+    return {
+      ...state,
+      resourceGatherCounts: updatedCounts,
+      inventory: updatedInventory,
+      skills: {
+        ...state.skills,
+        woodcutting: {
+          level: newLevel,
+          exp: newExpForCurrentLevel,
+          totalExp: newTotalExp,
+        },
+      },
+      playerStats: newPlayerStats,
+    };
+  };  
 
   const fishTick = (state, spot) => {
     const currentFishing = state.skills.fishing;
@@ -290,6 +343,19 @@ const usePlayerStore = create((set, get) => {
   // For "mining", taskData should include at least:
   //    { rockId: "copper_rock", interval: 5000 }
   const taskMappings = {
+    woodcutting: (taskData) => {
+      const tree = treesData[taskData.treeId];
+      return {
+        onTick: (state) => woodcutTick(state, tree),
+        condition: (state) => {
+          // Ensure an axe is equipped with a woodcuttingSpeed property.
+          if (!state.equipped.tool || !state.equipped.tool.woodcuttingSpeed) return false;
+          if (state.inventory.length >= state.inventoryCapacity) return false;
+          if (!tree.locations.includes(state.location.toLowerCase())) return false;
+          return true;
+        }
+      };
+    },    
     mining: (taskData) => {
       const rock = rocksData[taskData.rockId];
       return {
@@ -480,6 +546,23 @@ const usePlayerStore = create((set, get) => {
         taskData.interval = effectiveInterval;
       }
     
+      if (taskKey === "woodcutting") {
+        const tree = treesData[taskData.treeId];
+        const axe = currentState.equipped.tool; // Axes are assumed to be in the "tool" slot.
+        if (!axe || !axe.woodcuttingSpeed) {
+          alert("You need an axe to chop wood here!");
+          return;
+        }
+        if (currentState.skills.woodcutting.level < tree.level_req) {
+          alert(`You need woodcutting level ${tree.level_req} to chop ${tree.name}.`);
+          return;
+        }
+        // Adjust interval: subtract the axe's woodcuttingSpeed from the tree's base interval.
+        const baseInterval = taskData.interval;
+        const effectiveInterval = Math.max(baseInterval - axe.woodcuttingSpeed, 1000);
+        taskData.interval = effectiveInterval;
+      }      
+
       // For fishing: check that required tool and bait are present.
       if (taskKey === "fishing") {
         const spot = fishingSpotsData[taskData.spotId];

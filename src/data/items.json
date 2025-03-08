@@ -1,4 +1,34 @@
 {
+    "bronze_axe": {
+        "id": "bronze_axe",
+        "name": "Bronze Axe",
+        "type": "tool",
+        "woodcuttingSpeed": 1000, 
+        "value": 10,
+        "image": "/assets/images/items/woodcutting/bronze_axe.png"
+    },
+    "dragon_axe": {
+        "id": "dragon_axe",
+        "name": "Dragon Axe",
+        "type": "tool",
+        "woodcuttingSpeed": 6000, 
+        "value": 10,
+        "image": "/assets/images/items/woodcutting/dragon_axe.png"
+    },
+    "regular_logs": {
+        "id": "regular_logs",
+        "name": "Regular Logs",
+        "type": "material",
+        "value": 10,
+        "image": "/assets/images/items/woodcutting/regular_logs.png"
+    },
+    "oak_logs": {
+        "id": "oak_logs",
+        "name": "Oak Logs",
+        "type": "material",
+        "value": 10,
+        "image": "/assets/images/items/woodcutting/oak_logs.png"
+    },
     "bronze_pickaxe": {
         "id": "bronze_pickaxe",
         "name": "Bronze Pickaxe",

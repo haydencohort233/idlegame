@@ -12,6 +12,7 @@ import ShopList from "./components/ShopList";
 import Statistics from "./components/Statistics";
 import "./css/TabNav.css";
 import Fishing from "./components/Fishing";
+import Woodcutting from "./components/Woodcutting";
 
 function App() {
   const handleOfflineEarnings = usePlayerStore((state) => state.handleOfflineEarnings);
@@ -69,6 +70,7 @@ function App() {
         <>
         <PlayerStats />
           <ShopList />
+          {currentLocationData.features?.woodcutting && <Woodcutting />}
           {currentLocationData.features?.mining && <Mining />}
           {currentLocationData.features?.fishing && <Fishing />}
           <LocationsMap />
