@@ -127,6 +127,18 @@ function Equipment() {
                     </>
                 ) : "None"}
             </p>
+            <p>
+                Tool: {equipped.tool ? (
+                    <>
+                        <img 
+                            src={items[equipped.tool.id]?.image || "/assets/images/items/fallback.png"} 
+                            alt={equipped.tool.name} 
+                            width={32} height={32}
+                        />
+                        <button onClick={() => unequipItem("tool")}>{equipped.tool.name} (Unequip)</button>
+                    </>
+                ) : "None"}
+            </p>
         </div>
     );
 }

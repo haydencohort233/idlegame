@@ -6,7 +6,7 @@ function ItemActions({ item }) {
   const removeItem = usePlayerStore((state) => state.removeItem);
 
   // List of equipment slot types
-  const equipmentTypes = ["head", "neck", "back", "chest", "legs", "feet", "hands", "weapon", "shield", "ring"];
+  const equipmentTypes = ["head", "neck", "back", "chest", "legs", "feet", "hands", "weapon", "shield", "ring", "tool"];
 
   let actions = [];
   if (item.type === "resource") {

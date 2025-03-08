@@ -42,8 +42,8 @@
   "runite_rock": {
     "id": "runite_rock",
     "name": "Runite Rock",
-    "level_req": 10,
-    "exp": 200,
+    "level_req": 22,
+    "exp": 80,
     "reward": "runite_ore",
     "interval": 5000,
     "locations": ["lumbridge"],

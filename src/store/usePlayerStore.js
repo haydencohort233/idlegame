@@ -40,7 +40,8 @@ const defaultState = {
     hands: null,
     weapon: null,
     shield: null,
-    ring: null
+    ring: null,
+    tool: null,
   },
   buildings: {},
   location: "lumbridge",
@@ -179,8 +180,8 @@ const usePlayerStore = create((set, get) => {
 
   const mineTick = (state, rock) => {
     const currentMining = state.skills.mining;
-    const xpReward = rock.exp; // XP per tick
-    const rewardId = rock.reward; // e.g. "copper_ore"
+    const xpReward = rock.exp;
+    const rewardId = rock.reward;
     const currentCount = state.resourceGatherCounts[rewardId] || 0;
     const updatedCounts = {
       ...state.resourceGatherCounts,
@@ -294,31 +295,35 @@ const usePlayerStore = create((set, get) => {
       return {
         onTick: (state) => mineTick(state, rock),
         condition: (state) => {
-          // Stop if inventory is full
+          // Ensure a pickaxe is equipped
+          if (!state.equipped.tool || !state.equipped.tool.miningSpeed) return false;
+          // Stop if inventory is full.
           if (state.inventory.length >= state.inventoryCapacity) return false;
-          // Stop if the player is not in one of the rock's allowed locations
+          // Stop if the player is not in one of the rock's allowed locations.
           if (!rock.locations.includes(state.location.toLowerCase())) return false;
           return true;
         }
       };
-    },
+    },    
     fishing: (taskData) => {
       const spot = fishingSpotsData[taskData.spotId];
       return {
         onTick: (state) => {
-          // Check if a tool is required and present.
+          // Check if a tool is required and ensure it is equipped.
           if (spot.requiredTool) {
-            const hasTool =
-              state.inventory.some(i => i.id === spot.requiredTool) ||
-              Object.values(state.equipped).some(item => item && item.id === spot.requiredTool);
-            if (!hasTool) {
+            const isToolEquipped = Object.values(state.equipped).some(
+              (item) => item && item.id === spot.requiredTool
+            );
+            if (!isToolEquipped) {
               console.warn(`Missing required tool: ${spot.requiredTool}`);
               return state;
             }
           }
           // Check if bait is required and remove one unit if available.
           if (spot.requiredBait) {
-            const baitIndex = state.inventory.findIndex(i => i.id === spot.requiredBait);
+            const baitIndex = state.inventory.findIndex(
+              (i) => i.id === spot.requiredBait
+            );
             if (baitIndex === -1) {
               console.warn(`Missing required bait: ${spot.requiredBait}`);
               return state;
@@ -339,21 +344,21 @@ const usePlayerStore = create((set, get) => {
           if (state.inventory.length >= state.inventoryCapacity) return false;
           // Stop if the player is not in one of the spot’s allowed locations.
           if (!spot.locations.includes(state.location.toLowerCase())) return false;
-          // Check required tool.
+          // Check required tool is equipped.
           if (spot.requiredTool) {
-            const hasTool =
-              state.inventory.some(i => i.id === spot.requiredTool) ||
-              Object.values(state.equipped).some(item => item && item.id === spot.requiredTool);
-            if (!hasTool) return false;
+            const isToolEquipped = Object.values(state.equipped).some(
+              (item) => item && item.id === spot.requiredTool
+            );
+            if (!isToolEquipped) return false;
           }
-          // Check required bait.
+          // Check required bait is in the inventory.
           if (spot.requiredBait) {
-            if (!state.inventory.some(i => i.id === spot.requiredBait)) return false;
+            if (!state.inventory.some((i) => i.id === spot.requiredBait)) return false;
           }
           return true;
         }
       };
-    }
+    }    
     // Add other skills here
   };
 
@@ -455,7 +460,51 @@ const usePlayerStore = create((set, get) => {
         return;
       }
       const mapping = taskMappings[taskKey](taskData);
+      const currentState = get();
+    
+      // For mining: check pickaxe and adjust the interval before checking generic conditions.
+      if (taskKey === "mining") {
+        const rock = rocksData[taskData.rockId];
+        const pickaxe = currentState.equipped.tool;
+        if (!pickaxe || !pickaxe.miningSpeed) {
+          alert("You need a pickaxe to mine here!");
+          return;
+        }
+        if (currentState.skills.mining.level < rock.level_req) {
+          alert(`You need mining level ${rock.level_req} to mine ${rock.name}.`);
+          return;
+        }
+        // Adjust interval: subtract the pickaxe's miningSpeed from the rock's base interval.
+        const baseInterval = taskData.interval;
+        const effectiveInterval = Math.max(baseInterval - pickaxe.miningSpeed, 1000);
+        taskData.interval = effectiveInterval;
+      }
+    
+      // For fishing: check that required tool and bait are present.
+      if (taskKey === "fishing") {
+        const spot = fishingSpotsData[taskData.spotId];
+        const isToolEquipped = Object.values(currentState.equipped).some(
+          (item) => item && item.id === spot.requiredTool
+        );
+        if (!isToolEquipped) {
+          alert(`You need a ${spot.requiredTool.replace("_", " ")} to fish here!`);
+          return;
+        }
+        if (spot.requiredBait && !currentState.inventory.some(item => item.id === spot.requiredBait)) {
+          alert(`You need ${spot.requiredBait.replace("_", " ")} to fish here!`);
+          return;
+        }
+      }
+    
+      // Generic immediate condition check.
+      if (mapping.condition && !mapping.condition(currentState)) {
+        alert("Task conditions not met. Please check your requirements.");
+        return;
+      }
+        
+      // Conditions are met: start the timer.
       const timerId = setInterval(() => {
+        // Check condition on each tick in case state changes mid-task.
         if (mapping.condition && !mapping.condition(get())) {
           clearInterval(timerId);
           set({ activeSkillTask: null });
@@ -675,19 +724,24 @@ const usePlayerStore = create((set, get) => {
         console.error(`Item with ID "${itemId}" not found.`);
         return;
       }
-      const validTypes = ["head", "neck", "back", "chest", "legs", "feet", "hands", "weapon", "shield", "ring"];
+      // Update validTypes to include "tool"
+      const validTypes = ["head", "neck", "back", "chest", "legs", "feet", "hands", "weapon", "shield", "ring", "tool"];
       if (validTypes.includes(item.type)) {
         set((state) => {
           const inventoryItem = state.inventory.find(i => i.id === item.id);
           if (!inventoryItem || inventoryItem.quantity <= 0) return state;
-          let updatedInventory = state.inventory
-            .map(i => i.id === item.id ? { ...i, quantity: Math.max((i.quantity || 1) - 1, 0) } : i)
-            .filter(i => i.quantity > 0);
-          const previousItem = state.equipped[item.type];
+          let updatedInventory = state.inventory.map(i =>
+            i.id === item.id ? { ...i, quantity: Math.max((i.quantity || 1) - 1, 0) } : i
+          ).filter(i => i.quantity > 0);
+          
+          // If the item type is tool, place it in the "tool" slot
+          const slot = item.type;
+          const previousItem = state.equipped[slot];
           if (previousItem) {
             updatedInventory.push({ ...previousItem, quantity: 1 });
           }
-          const newEquipped = { ...state.equipped, [item.type]: item };
+          
+          const newEquipped = { ...state.equipped, [slot]: item };
           const newStats = calculateTotalStats(newEquipped);
           return { equipped: newEquipped, inventory: updatedInventory, stats: newStats };
         });
@@ -695,11 +749,11 @@ const usePlayerStore = create((set, get) => {
       } else {
         console.error(`Invalid item type: ${item.type}`);
       }
-    },
+    },    
 
     unequipItem: (slot) => {
       set((state) => {
-        const validTypes = ["head", "neck", "chest", "legs", "feet", "hands", "weapon", "shield", "ring"];
+        const validTypes = ["head", "neck", "chest", "legs", "feet", "hands", "weapon", "shield", "ring", "tool"];
         if (!validTypes.includes(slot)) return state;
         const equippedItem = state.equipped[slot];
         if (!equippedItem) return state;

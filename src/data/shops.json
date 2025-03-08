@@ -6,6 +6,20 @@
       "locations": ["lumbridge"],
       "items": [
         {
+          "id": "bronze_pickaxe",
+          "price": 1000,
+          "stock": 5,
+          "restockInterval": 60000,
+          "description": "A soft pickaxe. This will have to work."
+        },
+        {
+          "id": "dragon_pickaxe",
+          "price": 10000,
+          "stock": 5,
+          "restockInterval": 60000,
+          "description": "A pickaxe made of dragon scales."
+        },
+        {
           "id": "fishing_net",
           "price": 500,
           "stock": 5,

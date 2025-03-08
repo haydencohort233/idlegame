@@ -1,4 +1,20 @@
 {
+    "bronze_pickaxe": {
+        "id": "bronze_pickaxe",
+        "name": "Bronze Pickaxe",
+        "type": "tool",
+        "miningSpeed": 1000, 
+        "value": 10,
+        "image": "/assets/images/items/mining/bronze_pickaxe.png"
+    },
+    "dragon_pickaxe": {
+        "id": "dragon_pickaxe",
+        "name": "Dragon Pickaxe",
+        "type": "tool",
+        "miningSpeed": 3000, 
+        "value": 10,
+        "image": "/assets/images/items/mining/dragon_pickaxe.png"
+    },
     "copper_ore": {
         "id": "copper_ore",
         "name": "Copper Ore",
@@ -124,7 +140,7 @@
     "fishing_net": {
       "id": "fishing_net",
       "name": "Fishing Net",
-      "type": "consumable",
+      "type": "tool",
       "heal": 20,
       "value": 5,
       "image": "/assets/images/items/fishing/fishing_net.png"
@@ -132,7 +148,7 @@
     "fishing_rod": {
         "id": "fishing_rod",
         "name": "Fishing Rod",
-        "type": "consumable",
+        "type": "tool",
         "heal": 20,
         "value": 5,
         "image": "/assets/images/items/fishing/fishing_rod.png"
@@ -148,7 +164,7 @@
     "lobster_pot": {
       "id": "lobster_pot",
       "name": "Lobster Pot",
-      "type": "consumable",
+      "type": "tool",
       "heal": 20,
       "value": 5,
       "image": "/assets/images/items/fishing/lobster_pot.png"
