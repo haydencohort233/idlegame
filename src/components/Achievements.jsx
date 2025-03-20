@@ -1,7 +1,7 @@
 import React from "react";
 import usePlayerStore from "../store/usePlayerStore";
 import achievementsData from "../data/achievements.json";
-import "../css/Achievements.css"; // Ensure this CSS file exists
+import "../css/Achievements.css";
 
 function Achievements() {
   const { achievements, claimAchievementReward } = usePlayerStore();

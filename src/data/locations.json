@@ -8,6 +8,7 @@
       "mining": true,
       "woodcutting": true,
       "fishing": true,
+      "farming": true,
       "bank": true
     }
   },
@@ -20,6 +21,7 @@
       "mining": true,
       "woodcutting": true,
       "fishing": true,
+      "farming": true,
       "bank": false
     }
   }

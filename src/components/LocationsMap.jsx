@@ -75,6 +75,7 @@ function LocationsMap() {
                     {selectedLocation.features.bank && <li>🏦 Bank available</li>}
                     {selectedLocation.features.quests && <li>📜 Quests available</li>}
                     {selectedLocation.features.shops && <li>🛒 Shops available</li>}
+                    {selectedLocation.features.farming && <li>🌱 Farming available</li>}
                   </ul>
                 )}
 

@@ -1,0 +1,19 @@
+{
+    "lumbridge": {
+      "patches": [
+        {
+          "id": "lumbridge_allotment_patch1",
+          "type": "seed"
+        }
+      ]
+    },
+    "dark_forest": {
+      "patches": [
+        {
+          "id": "dark_forest_tree_patch1",
+          "type": "sapling"
+        }
+      ]
+    }
+  }
+  

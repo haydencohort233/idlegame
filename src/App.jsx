@@ -13,6 +13,7 @@ import Statistics from "./components/Statistics";
 import "./css/TabNav.css";
 import Fishing from "./components/Fishing";
 import Woodcutting from "./components/Woodcutting";
+import Farming from "./components/Farming";
 
 function App() {
   const handleOfflineEarnings = usePlayerStore((state) => state.handleOfflineEarnings);
@@ -70,6 +71,7 @@ function App() {
         <>
         <PlayerStats />
           <ShopList />
+          {currentLocationData.features?.fishing && <Farming />}
           {currentLocationData.features?.woodcutting && <Woodcutting />}
           {currentLocationData.features?.mining && <Mining />}
           {currentLocationData.features?.fishing && <Fishing />}

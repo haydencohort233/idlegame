@@ -33,6 +33,12 @@ function Statistics() {
         <li>Total Logs Cut: {playerStats.totalLogsCut}</li>
         <li>Regular Logs Cut: {resourceGatherCounts["regular_logs"] || 0}</li>
         <li>Oak Logs Cut: {resourceGatherCounts["oak_logs"] || 0}</li>
+
+    <h3>Farming Statistics</h3>
+        <li>Potatoes Harvested: {resourceGatherCounts["potato"] || 0}</li>
+        <li>Cabbages Harvested: {resourceGatherCounts["cabbage"] || 0}</li>
+        <li>Watermelons Harvested: {resourceGatherCounts["watermelon"] || 0}</li>
+        <li>Oak Trees Harvested: {resourceGatherCounts["oak_trees_harvested"] || 0}</li>
       </ul>
     </div>
   );

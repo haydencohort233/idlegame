@@ -1,0 +1,52 @@
+{
+  "potato_seeds": {
+    "id": "potato_seeds",
+    "name": "Potato Seeds",
+    "level_req": 1,
+    "growthTime": 10000,
+    "cropYield": "potato",
+    "plantQuantity": 3,
+    "type": "seed",
+    "exp": 2000
+  },
+  "cabbage_seeds": {
+    "id": "cabbage_seeds",
+    "name": "Cabbage Seeds",
+    "level_req": 2,
+    "growthTime": 20000,
+    "cropYield": "cabbage",
+    "plantQuantity": 3,
+    "type": "seed",
+    "exp": 3000
+  },
+  "watermelon_seeds": {
+    "id": "watermelon_seeds",
+    "name": "Watermelon Seeds",
+    "level_req": 3,
+    "growthTime": 30000,
+    "cropYield": "watermelon",
+    "plantQuantity": 3,
+    "type": "seed",
+    "exp": 4000
+  },
+  "tree_seed": {
+    "id": "tree_seed",
+    "name": "Tree Seed",
+    "level_req": 15,
+    "growthTime": 30000,
+    "cropYield": "regular_logs",
+    "plantQuantity": 1,
+    "type": "sapling",
+    "exp": 50
+  },
+  "oak_sapling": {
+    "id": "oak_sapling",
+    "name": "Oak Sapling",
+    "level_req": 1,
+    "growthTime": 30000,
+    "cropYield": "oak_logs",
+    "plantQuantity": 1,
+    "type": "sapling",
+    "exp": 50
+  }
+}

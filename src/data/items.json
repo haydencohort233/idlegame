@@ -230,5 +230,62 @@
       "heal": 20,
       "value": 5,
       "image": "/assets/images/items/fishing/feathers.png"
+    },
+    "spade": {
+      "id": "spade",
+      "name": "Spade",
+      "type": "tool",
+      "value": 5,
+      "image": "/assets/images/items/farming/spade.png"
+    },
+    "potato_seeds": {
+      "id": "potato_seeds",
+      "name": "Potato Seeds",
+      "type": "seed",
+      "value": 5,
+      "image": "/assets/images/items/farming/seeds/potato_seeds.png"
+    },
+    "potato": {
+      "id": "potato",
+      "name": "Potato",
+      "type": "consumable",
+      "value": 5,
+      "image": "/assets/images/items/farming/crops/potato.png"
+    },
+    "cabbage_seeds": {
+      "id": "cabbage_seeds",
+      "name": "Cabbage Seeds",
+      "type": "seed",
+      "value": 5,
+      "image": "/assets/images/items/farming/seeds/cabbage_seeds.png"
+    },
+    "cabbage": {
+      "id": "cabbage",
+      "name": "Cabbage",
+      "type": "consumable",
+      "value": 5,
+      "image": "/assets/images/items/farming/crops/cabbage.png"
+    },
+    "watermelon_seeds": {
+      "id": "watermelon_seeds",
+      "name": "Watermelon Seeds",
+      "type": "seed",
+      "value": 5,
+      "image": "/assets/images/items/farming/seeds/watermelon_seeds.png"
+    },
+    "watermelon": {
+      "id": "watermelon",
+      "name": "Watermelon",
+      "type": "consumable",
+      "value": 5,
+      "image": "/assets/images/items/farming/crops/watermelon.png"
+    },
+      "oak_sapling": {
+        "id": "oak_sapling",
+        "name": "Oak Sapling",
+        "type": "sapling",
+        "value": 5,
+        "image": "/assets/images/items/farming/seeds/oak_sapling.png",
+        "description": "A sapling that can be planted in a tree patch to grow into an oak tree."
     }
 }

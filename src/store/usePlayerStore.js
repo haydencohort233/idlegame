@@ -1,4 +1,3 @@
-// src/store/usePlayerStore.js
 import { create } from "zustand";
 import { getItem } from "../utils/itemUtils";
 import rocksData from "../data/rocks.json";
@@ -6,6 +5,24 @@ import treesData from "../data/trees.json";
 import fishingSpotsData from "../data/fishingSpots.json";
 import experienceData from "../data/experience.json";
 import achievementsData from "../data/achievements.json";
+import patches from "../data/patches.json";
+
+// Build defaultFarmingPatches from patches.json.
+const defaultFarmingPatches = {};
+Object.entries(patches).forEach(([loc, data]) => {
+  data.patches.forEach(patch => {
+    defaultFarmingPatches[patch.id] = {
+      location: loc,
+      plantedCrop: {
+        seedId: null,
+        plantedAt: null,
+        growthTime: null,
+        cropYield: null,
+        type: null
+      }
+    };
+  });
+});
 
 const defaultState = {
   name: "Player",
@@ -27,7 +44,8 @@ const defaultState = {
     fishing: { level: 1, exp: 0, totalExp: 0 }, 
     crafting: { level: 1, exp: 0, totalExp: 0 }, 
     agility: { level: 1, exp: 0, totalExp: 0 },
-    woodcutting: { level: 1, exp: 0, totalExp: 0 } 
+    woodcutting: { level: 1, exp: 0, totalExp: 0 },
+    farming: { level: 1, exp: 0, totalExp: 0 }
   },
   inventory: [],
   inventoryCapacity: 30,
@@ -50,6 +68,7 @@ const defaultState = {
   visitedLocations: [],
   lastActive: Date.now(),
   autoSaveInterval: 30000, // 30 seconds
+  farmingPatches: defaultFarmingPatches,
   // Initialize achievements based on achievementsData
   achievements: Object.keys(achievementsData).reduce((acc, key) => {
     acc[key] = { progress: 0, completed: false, claimed: false };
@@ -64,7 +83,8 @@ const defaultState = {
     totalDeaths: 0,
     totalOresMined: 0,
     totalFishCaught: 0,
-    totalLogsCut: 0
+    totalLogsCut: 0,
+    totalCropsHarvested: 0
   }
 };
 
@@ -87,7 +107,8 @@ const mergedState = {
     ...(savedState.stats || {})
   },
   skills: mergedSkills,
-  achievements: savedState.achievements || defaultState.achievements
+  achievements: savedState.achievements || defaultState.achievements,
+  farmingPatches: { ...defaultState.farmingPatches, ...(savedState.farmingPatches || {}) },
 };
 
 const usePlayerStore = create((set, get) => {
@@ -118,6 +139,22 @@ const usePlayerStore = create((set, get) => {
   const getExpThreshold = (level) => {
     return experienceData[level] || (level * 1000); // Fallback if level is missing
   };
+
+  const defaultFarmingPatches = {};
+  Object.entries(patches).forEach(([loc, data]) => {
+    data.patches.forEach(patch => {
+      defaultFarmingPatches[patch.id] = {
+        location: loc,
+        plantedCrop: {
+          seedId: null,
+          plantedAt: null,
+          growthTime: null,
+          cropYield: null,
+          type: null
+        }
+      };
+    });
+  });  
 
   const woodcutTick = (state, tree) => {
     const currentWoodcutting = state.skills.woodcutting;
@@ -769,6 +806,66 @@ const usePlayerStore = create((set, get) => {
       saveState();
     },    
 
+    plantCrop: (patchId, cropData) => {
+      set((state) => ({
+        farmingPatches: {
+          ...state.farmingPatches,
+          [patchId]: {
+            ...state.farmingPatches[patchId],
+            plantedCrop: cropData
+          }
+        }
+      }));
+      saveState();
+    },    
+    
+    harvestCrop: (patchId, expAward) => {
+      set((state) => {
+        const updatedPatches = {
+          ...state.farmingPatches,
+          [patchId]: {
+            ...(state.farmingPatches[patchId] || {}),
+            plantedCrop: {
+              seedId: null,
+              plantedAt: null,
+              growthTime: null,
+              cropYield: null,
+              type: null
+            }
+          }
+        };
+    
+        // Fixed experience gain
+        const totalExpGained = expAward;
+        const farmingSkill = state.skills.farming;
+        let newTotalExp = farmingSkill.totalExp + totalExpGained;
+        let newLevel = farmingSkill.level;
+    
+        // Level-up loop: Increase level if total exp exceeds the threshold.
+        while (newTotalExp >= getExpThreshold(newLevel)) {
+          newLevel++;
+        }
+        const newExpForCurrentLevel = newTotalExp - getExpThreshold(newLevel - 1);
+    
+        return {
+          farmingPatches: updatedPatches,
+          skills: {
+            ...state.skills,
+            farming: {
+              level: newLevel,
+              exp: newExpForCurrentLevel,
+              totalExp: newTotalExp
+            }
+          },
+          playerStats: {
+            ...state.playerStats,
+            totalCropsHarvested: state.playerStats.totalCropsHarvested + 1
+          }
+        };
+      });
+      saveState();
+    },   
+
     addItem: (itemId) => {
       const item = getItem(itemId);
       if (item) {
@@ -886,8 +983,21 @@ const usePlayerStore = create((set, get) => {
         };
       });
       saveState();
-    }
-    // Add more here    
+    },
+    // 1) Add this snippet inside your create(...) return block
+    incrementResourceCount: (resourceId, amount = 1) => {
+      set((state) => {
+        const newCount = (state.resourceGatherCounts[resourceId] || 0) + amount;
+        return {
+          resourceGatherCounts: {
+            ...state.resourceGatherCounts,
+            [resourceId]: newCount,
+          },
+        };
+      });
+      saveState();
+    },
+    // Add more here
   };
 });
 

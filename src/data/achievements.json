@@ -46,6 +46,30 @@
         "progressType": "level",
         "goal": 5,
         "reward": { "exp": 800 }
-    }
+    },
+    "harvest_100_potatoes": {
+        "id": "harvest_100_potatoes",
+        "name": "Master Potato Farmer",
+        "description": "Harvest 100 potatoes.",
+        "progressType": "counter",
+        "goal": 100,
+        "reward": { "gold": 200 }
+      },
+      "harvest_100_watermelons": {
+        "id": "harvest_100_watermelons",
+        "name": "Watermelon Tycoon",
+        "description": "Harvest 100 watermelons.",
+        "progressType": "counter",
+        "goal": 100,
+        "reward": { "gold": 300 }
+      },
+      "harvest_100_oak_trees": {
+        "id": "harvest_100_oak_trees",
+        "name": "Oak Plantation",
+        "description": "Harvest 10 oak trees via farming.",
+        "progressType": "counter",
+        "goal": 10,
+        "reward": { "item": "spade" }
+      }
   }
   

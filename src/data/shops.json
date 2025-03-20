@@ -60,6 +60,41 @@
           "stock": 100,
           "restockInterval": 1000,
           "description": "A sturdy iron sword."
+        },
+        {
+          "id": "potato_seeds",
+          "price": 50,
+          "stock": 100,
+          "restockInterval": 1000,
+          "description": "A sturdy iron sword."
+        },
+        {
+          "id": "watermelon_seeds",
+          "price": 50,
+          "stock": 100,
+          "restockInterval": 1000,
+          "description": "A sturdy iron sword."
+        },
+        {
+          "id": "cabbage_seeds",
+          "price": 50,
+          "stock": 100,
+          "restockInterval": 1000,
+          "description": "A sturdy iron sword."
+        },
+        {
+          "id": "spade",
+          "price": 500,
+          "stock": 100,
+          "restockInterval": 1000,
+          "description": "A sturdy iron sword."
+        },
+        {
+          "id": "oak_sapling",
+          "price": 50,
+          "stock": 100,
+          "restockInterval": 1000,
+          "description": "A sturdy iron sword."
         }
       ]
     },
