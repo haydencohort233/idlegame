@@ -1,92 +1,104 @@
 {
     "bronze_axe": {
-        "id": "bronze_axe",
-        "name": "Bronze Axe",
-        "type": "tool",
-        "woodcuttingSpeed": 1000, 
-        "value": 10,
-        "image": "/assets/images/items/woodcutting/bronze_axe.png"
+      "id": "bronze_axe",
+      "name": "Bronze Axe",
+      "type": "tool",
+      "woodcuttingSpeed": 1000, 
+      "value": 10,
+      "image": "/assets/images/items/woodcutting/bronze_axe.png",
+      "description": "A cabbage, ick."
     },
     "dragon_axe": {
-        "id": "dragon_axe",
-        "name": "Dragon Axe",
-        "type": "tool",
-        "woodcuttingSpeed": 6000, 
-        "value": 10,
-        "image": "/assets/images/items/woodcutting/dragon_axe.png"
+      "id": "dragon_axe",
+      "name": "Dragon Axe",
+      "type": "tool",
+      "woodcuttingSpeed": 6000, 
+      "value": 10,
+      "image": "/assets/images/items/woodcutting/dragon_axe.png",
+      "description": "A cabbage, ick."
     },
     "regular_logs": {
-        "id": "regular_logs",
-        "name": "Regular Logs",
-        "type": "material",
-        "value": 10,
-        "image": "/assets/images/items/woodcutting/regular_logs.png"
+      "id": "regular_logs",
+      "name": "Regular Logs",
+      "type": "material",
+      "value": 10,
+      "image": "/assets/images/items/woodcutting/regular_logs.png",
+      "description": "A cabbage, ick."
     },
     "oak_logs": {
-        "id": "oak_logs",
-        "name": "Oak Logs",
-        "type": "material",
-        "value": 10,
-        "image": "/assets/images/items/woodcutting/oak_logs.png"
+      "id": "oak_logs",
+      "name": "Oak Logs",
+      "type": "material",
+      "value": 10,
+      "image": "/assets/images/items/woodcutting/oak_logs.png",
+      "description": "A cabbage, ick."
     },
     "bronze_pickaxe": {
-        "id": "bronze_pickaxe",
-        "name": "Bronze Pickaxe",
-        "type": "tool",
-        "miningSpeed": 1000, 
-        "value": 10,
-        "image": "/assets/images/items/mining/bronze_pickaxe.png"
+      "id": "bronze_pickaxe",
+      "name": "Bronze Pickaxe",
+      "type": "tool",
+      "miningSpeed": 1000, 
+      "value": 10,
+      "image": "/assets/images/items/mining/bronze_pickaxe.png",
+      "description": "A cabbage, ick."
     },
     "dragon_pickaxe": {
-        "id": "dragon_pickaxe",
-        "name": "Dragon Pickaxe",
-        "type": "tool",
-        "miningSpeed": 3000, 
-        "value": 10,
-        "image": "/assets/images/items/mining/dragon_pickaxe.png"
+      "id": "dragon_pickaxe",
+      "name": "Dragon Pickaxe",
+      "type": "tool",
+      "miningSpeed": 3000, 
+      "value": 10,
+      "image": "/assets/images/items/mining/dragon_pickaxe.png",
+      "description": "A cabbage, ick."
     },
     "copper_ore": {
-        "id": "copper_ore",
-        "name": "Copper Ore",
-        "type": "resource",
-        "value": 20,
-        "image": "/assets/images/items/ores/copper_ore.png"
+      "id": "copper_ore",
+      "name": "Copper Ore",
+      "type": "resource",
+      "value": 20,
+      "image": "/assets/images/items/ores/copper_ore.png",
+      "description": "A cabbage, ick."
     },
     "iron_ore": {
-        "id": "iron_ore",
-        "name": "Iron Ore",
-        "type": "resource",
-        "value": 80,
-        "image": "/assets/images/items/ores/iron_ore.png"
+      "id": "iron_ore",
+      "name": "Iron Ore",
+      "type": "resource",
+      "value": 80,
+      "image": "/assets/images/items/ores/iron_ore.png",
+      "description": "A cabbage, ick."
     },
     "gold_ore": {
-        "id": "gold_ore",
-        "name": "Gold Ore",
-        "type": "resource",
-        "value": 150,
-        "image": "/assets/images/items/ores/gold_ore.png"
+      "id": "gold_ore",
+      "name": "Gold Ore",
+      "type": "resource",
+      "value": 150,
+      "image": "/assets/images/items/ores/gold_ore.png",
+      "description": "A cabbage, ick."
     },
     "mithril_ore": {
-        "id": "mithril_ore",
-        "name": "Mithril Ore",
-        "type": "resource",
-        "value": 200,
-        "image": "/assets/images/items/ores/mithril_ore.png"
+      "id": "mithril_ore",
+      "name": "Mithril Ore",
+      "type": "resource",
+      "value": 200,
+      "image": "/assets/images/items/ores/mithril_ore.png",
+      "description": "A cabbage, ick."
     },
     "runite_ore": {
-        "id": "runite_ore",
-        "name": "Runite Ore",
-        "type": "resource",
-        "value": 400,
-        "image": "/assets/images/items/ores/runite_ore.png"
+      "id": "runite_ore",
+      "name": "Runite Ore",
+      "type": "resource",
+      "value": 400,
+      "image": "/assets/images/items/ores/runite_ore.png",
+      "description": "A cabbage, ick."
     },
     "bronze_chainbody": {
-        "id": "bronze_chainbody",
-        "name": "Bronze Chainbody",
-        "type": "chest",
-        "attack_bonus": 2,
-        "value": 10,
-        "image": "/assets/images/items/armor/bronze_chainbody.png"
+      "id": "bronze_chainbody",
+      "name": "Bronze Chainbody",
+      "type": "chest",
+      "attack_bonus": 2,
+      "value": 10,
+      "image": "/assets/images/items/armor/bronze_chainbody.png",
+      "description": "A cabbage, ick."
     },
     "bronze_sword": {
       "id": "bronze_sword",
@@ -94,7 +106,8 @@
       "type": "weapon",
       "attack_bonus": 2,
       "value": 10,
-      "image": "/assets/images/items/weapons/bronze_sword.png"
+      "image": "/assets/images/items/weapons/bronze_sword.png",
+      "description": "A cabbage, ick."
     },
     "iron_sword": {
         "id": "iron_sword",
@@ -102,7 +115,8 @@
         "type": "weapon",
         "attack_bonus": 4,
         "value": 10,
-        "image": "/assets/images/items/weapons/iron_sword.png"
+        "image": "/assets/images/items/weapons/iron_sword.png",
+      "description": "A cabbage, ick."
     },
     "leather_helmet": {
       "id": "leather_helmet",
@@ -110,31 +124,35 @@
       "type": "head",
       "defence_bonus": 3,
       "value": 20,
-      "image": "/assets/images/items/armor/leather_helmet.png"
+      "image": "/assets/images/items/armor/leather_helmet.png",
+      "description": "A cabbage, ick."
     },
     "leather_boots": {
-        "id": "leather_boots",
-        "name": "Leather Boots",
-        "type": "feet",
-        "defence_bonus": 3,
-        "value": 20,
-        "image": "/assets/images/items/armor/leather_boots.png"
+      "id": "leather_boots",
+      "name": "Leather Boots",
+      "type": "feet",
+      "defence_bonus": 3,
+      "value": 20,
+      "image": "/assets/images/items/armor/leather_boots.png",
+      "description": "A cabbage, ick."
     },
     "leather_gloves": {
-        "id": "leather_gloves",
-        "name": "Leather Gloves",
-        "type": "hands",
-        "defence_bonus": 3,
-        "value": 20,
-        "image": "/assets/images/items/armor/leather_gloves.png"
+      "id": "leather_gloves",
+      "name": "Leather Gloves",
+      "type": "hands",
+      "defence_bonus": 3,
+      "value": 20,
+      "image": "/assets/images/items/armor/leather_gloves.png",
+      "description": "A cabbage, ick."
     },
     "robe_bottom": {
-        "id": "robe_bottom",
-        "name": "Robe Bottom",
-        "type": "legs",
-        "magic_bonus": 3,
-        "value": 20,
-        "image": "/assets/images/items/armor/robe_bottom.png"
+      "id": "robe_bottom",
+      "name": "Robe Bottom",
+      "type": "legs",
+      "magic_bonus": 3,
+      "value": 20,
+      "image": "/assets/images/items/armor/robe_bottom.png",
+      "description": "A cabbage, ick."
     },
     "gold_ring": {
       "id": "gold_ring",
@@ -142,30 +160,34 @@
       "type": "ring",
       "gold_multiplier": 2.0,
       "value": 50,
-      "image": "/assets/images/items/jewelry/gold_ring.png"
+      "image": "/assets/images/items/jewelry/gold_ring.png",
+      "description": "A cabbage, ick."
     },
     "silver_necklace": {
-        "id": "silver_necklace",
-        "name": "Silver Necklace",
-        "type": "neck",
-        "gold_multiplier": 2.0,
-        "value": 50,
-        "image": "/assets/images/items/jewelry/silver_necklace.png"
+      "id": "silver_necklace",
+      "name": "Silver Necklace",
+      "type": "neck",
+      "gold_multiplier": 2.0,
+      "value": 50,
+      "image": "/assets/images/items/jewelry/silver_necklace.png",
+      "description": "A cabbage, ick."
     },
     "obsidian_cape": {
-        "id": "obsidian_cape",
-        "name": "Obsidian Cape",
-        "type": "back",
-        "value": 50,
-        "image": "/assets/images/items/armor/obsidian_cape.png"
+      "id": "obsidian_cape",
+      "name": "Obsidian Cape",
+      "type": "back",
+      "value": 50,
+      "image": "/assets/images/items/armor/obsidian_cape.png",
+      "description": "A cabbage, ick."
     },
     "wooden_shield": {
-        "id": "wooden_shield",
-        "name": "Wooden Shield",
-        "type": "shield",
-        "defence_bonus": 5,
-        "value": 50,
-        "image": "/assets/images/items/armor/wooden_shield.png"
+      "id": "wooden_shield",
+      "name": "Wooden Shield",
+      "type": "shield",
+      "defence_bonus": 5,
+      "value": 50,
+      "image": "/assets/images/items/armor/wooden_shield.png",
+      "description": "A cabbage, ick."
     },
     "fishing_net": {
       "id": "fishing_net",
@@ -173,15 +195,17 @@
       "type": "tool",
       "heal": 20,
       "value": 5,
-      "image": "/assets/images/items/fishing/fishing_net.png"
+      "image": "/assets/images/items/fishing/fishing_net.png",
+      "description": "A cabbage, ick."
     },
     "fishing_rod": {
-        "id": "fishing_rod",
-        "name": "Fishing Rod",
-        "type": "tool",
-        "heal": 20,
-        "value": 5,
-        "image": "/assets/images/items/fishing/fishing_rod.png"
+      "id": "fishing_rod",
+      "name": "Fishing Rod",
+      "type": "tool",
+      "heal": 20,
+      "value": 5,
+      "image": "/assets/images/items/fishing/fishing_rod.png",
+      "description": "A cabbage, ick."
     },
     "fishing_bait": {
       "id": "fishing_bait",
@@ -189,7 +213,8 @@
       "type": "consumable",
       "heal": 20,
       "value": 5,
-      "image": "/assets/images/items/fishing/fishing_bait.png"
+      "image": "/assets/images/items/fishing/fishing_bait.png",
+      "description": "A cabbage, ick."
     },
     "lobster_pot": {
       "id": "lobster_pot",
@@ -197,31 +222,35 @@
       "type": "tool",
       "heal": 20,
       "value": 5,
-      "image": "/assets/images/items/fishing/lobster_pot.png"
+      "image": "/assets/images/items/fishing/lobster_pot.png",
+      "description": "A cabbage, ick."
     },
     "raw_tuna": {
-        "id": "raw_tuna",
-        "name": "Raw Tuna",
-        "type": "consumable",
-        "heal": 20,
-        "value": 5,
-        "image": "/assets/images/items/fishing/raw_tuna.png"
+      "id": "raw_tuna",
+      "name": "Raw Tuna",
+      "type": "consumable",
+      "heal": 20,
+      "value": 5,
+      "image": "/assets/images/items/fishing/raw_tuna.png",
+      "description": "A cabbage, ick."
     },
     "raw_shark": {
-        "id": "raw_shark",
-        "name": "Raw Shark",
-        "type": "consumable",
-        "heal": 20,
-        "value": 5,
-        "image": "/assets/images/items/fishing/raw_shark.png"
+      "id": "raw_shark",
+      "name": "Raw Shark",
+      "type": "consumable",
+      "heal": 20,
+      "value": 5,
+      "image": "/assets/images/items/fishing/raw_shark.png",
+      "description": "A cabbage, ick."
     },
     "raw_shrimps": {
-        "id": "raw_shrimps",
-        "name": "Raw Shrimps",
-        "type": "consumable",
-        "heal": 20,
-        "value": 5,
-        "image": "/assets/images/items/fishing/raw_shrimps.png"
+      "id": "raw_shrimps",
+      "name": "Raw Shrimps",
+      "type": "consumable",
+      "heal": 20,
+      "value": 5,
+      "image": "/assets/images/items/fishing/raw_shrimps.png",
+      "description": "A cabbage, ick."
     },
     "feathers": {
       "id": "feathers",
@@ -229,63 +258,87 @@
       "type": "consumable",
       "heal": 20,
       "value": 5,
-      "image": "/assets/images/items/fishing/feathers.png"
+      "image": "/assets/images/items/fishing/feathers.png",
+      "description": "A cabbage, ick."
     },
     "spade": {
       "id": "spade",
       "name": "Spade",
       "type": "tool",
       "value": 5,
-      "image": "/assets/images/items/farming/spade.png"
+      "image": "/assets/images/items/farming/spade.png",
+      "description": "A cabbage, ick."
     },
     "potato_seeds": {
       "id": "potato_seeds",
       "name": "Potato Seeds",
       "type": "seed",
       "value": 5,
-      "image": "/assets/images/items/farming/seeds/potato_seeds.png"
+      "image": "/assets/images/items/farming/seeds/potato_seeds.png",
+      "description": "A cabbage, ick."
     },
     "potato": {
       "id": "potato",
       "name": "Potato",
       "type": "consumable",
       "value": 5,
-      "image": "/assets/images/items/farming/crops/potato.png"
+      "image": "/assets/images/items/farming/crops/potato.png",
+      "description": "A cabbage, ick."
     },
     "cabbage_seeds": {
       "id": "cabbage_seeds",
       "name": "Cabbage Seeds",
       "type": "seed",
       "value": 5,
-      "image": "/assets/images/items/farming/seeds/cabbage_seeds.png"
+      "image": "/assets/images/items/farming/seeds/cabbage_seeds.png",
+      "description": "A cabbage, ick."
     },
     "cabbage": {
       "id": "cabbage",
       "name": "Cabbage",
       "type": "consumable",
       "value": 5,
-      "image": "/assets/images/items/farming/crops/cabbage.png"
+      "image": "/assets/images/items/farming/crops/cabbage.png",
+      "description": "A cabbage, ick."
     },
     "watermelon_seeds": {
       "id": "watermelon_seeds",
       "name": "Watermelon Seeds",
       "type": "seed",
       "value": 5,
-      "image": "/assets/images/items/farming/seeds/watermelon_seeds.png"
+      "image": "/assets/images/items/farming/seeds/watermelon_seeds.png",
+      "description": "A watermelon seed."
     },
     "watermelon": {
       "id": "watermelon",
       "name": "Watermelon",
       "type": "consumable",
       "value": 5,
-      "image": "/assets/images/items/farming/crops/watermelon.png"
+      "image": "/assets/images/items/farming/crops/watermelon.png",
+      "description": "A watermelon, cut it and eat it."
     },
-      "oak_sapling": {
-        "id": "oak_sapling",
-        "name": "Oak Sapling",
-        "type": "sapling",
-        "value": 5,
-        "image": "/assets/images/items/farming/seeds/oak_sapling.png",
-        "description": "A sapling that can be planted in a tree patch to grow into an oak tree."
+    "oak_sapling": {
+      "id": "oak_sapling",
+      "name": "Oak Sapling",
+      "type": "sapling",
+      "value": 5,
+      "image": "/assets/images/items/farming/seeds/oak_sapling.png",
+      "description": "A sapling that can be planted in a tree patch to grow into an oak tree."
+    },
+    "bank_key": {
+      "id": "bank_key",
+      "name": "Bank Key",
+      "type": "key",
+      "value": 0,
+      "image": "/assets/images/items/keys/bank_key.png",
+      "description": "A key that permanently increases your bank capacity by 5."
+    },
+    "falador_key": {
+      "id": "falador_key",
+      "name": "Falador Key",
+      "type": "key",
+      "value": 0,
+      "image": "/assets/images/items/keys/bank_key.png",
+      "description": "A key that grants access to the city of Falador."
     }
 }

@@ -1,0 +1,112 @@
+/* Bank.css */
+
+/* Container around the bank UI */
+.bank-interface {
+    margin-top: 1rem;
+  }
+  
+  /* The toggle button with an icon */
+  .bank-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 6px 12px;
+    font-size: 14px;
+    background-color: #2e2e2e;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 4px;
+  }
+  
+  .bank-icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* 
+    The parent flex container: two 400px columns side by side 
+    on wide screens. 
+  */
+  .bank-content {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+  
+  /*
+    Exactly 400px width for each column on desktop, 
+    guaranteeing both columns match width (and thus appear uniform).
+  */
+  .inventory-section,
+  .bank-section {
+    width: 400px;
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    padding: 10px;
+  }
+  
+  .inventory-section h3,
+  .bank-section h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+  
+  /* Each item row (icon -> label -> deposit/withdraw buttons) */
+  .bank-item-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  
+  .bank-item-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+  }
+  
+  .bank-item-label {
+    flex: 1; /* push the deposit/withdraw buttons to the right */
+  }
+  
+  /* "No items" text style */
+  .empty {
+    color: #999;
+    font-style: italic;
+  }
+
+  /* Minimal snippet for "small" withdraw buttons. */
+.small-btn {
+    padding: 3px 6px;      /* small horizontal padding */
+    font-size: 14px;       /* or 0.875rem */
+    min-width: 40px;       /* ensures a clickable area for mobile */
+    min-height: 32px;      /* better for finger taps */
+    margin-left: 4px;      /* little spacing between buttons */
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #666;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .small-btn:hover {
+    background-color: #555;
+  }
+  
+  
+  /* 
+    RESPONSIVE: On screens narrower than ~850px, stack them vertically. 
+    (400px + 400px = 800px plus some gap).
+  */
+  @media (max-width: 850px) {
+    .bank-content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .inventory-section,
+    .bank-section {
+      width: 100%; /* let them expand to full width on mobile */
+      max-width: 400px; /* optional if you want a max on mobile, else remove */
+    }
+  }
+  

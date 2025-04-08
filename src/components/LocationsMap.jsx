@@ -9,10 +9,11 @@ function LocationsMap() {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const travel = usePlayerStore((state) => state.travel);
   const currentLocation = usePlayerStore((state) => state.location);
+  const unlockedLocations = usePlayerStore((state) => state.unlockedLocations);
 
   const openModal = () => {
     setIsOpen(true);
-    setSelectedLocation(locationsData[currentLocation]); // Auto-select current location
+    setSelectedLocation(locationsData[currentLocation]);
   };
 
   const closeModal = () => {
@@ -47,49 +48,88 @@ function LocationsMap() {
             </p>
 
             <div className="locations-list">
-              {Object.values(locationsData).map((loc) => (
-                <button
-                  key={loc.id}
-                  className={`location-btn ${selectedLocation?.id === loc.id ? "selected" : ""}`}
-                  onClick={() => handleLocationClick(loc)}
-                >
-                  {loc.name}
-                </button>
-              ))}
+              {Object.values(locationsData).map((loc) => {
+                const isUnlocked = unlockedLocations.includes(loc.id);
+                return (
+                  <button
+                    key={loc.id}
+                    className={`location-btn ${selectedLocation?.id === loc.id ? "selected" : ""}`}
+                    onClick={() => handleLocationClick(loc)}
+                  >
+                    {isUnlocked ? loc.name : "???"}
+                  </button>
+                );
+              })}
             </div>
 
             {selectedLocation && (
               <div className="location-preview">
-                <h4>{selectedLocation.name}</h4>
-                <p>{selectedLocation.description}</p>
-
-                {selectedLocation.image && (
-                  <img src={selectedLocation.image} alt={selectedLocation.name} className="location-image" />
+                {unlockedLocations.includes(selectedLocation.id) ? (
+                  <>
+                    <h4>{selectedLocation.name}</h4>
+                    <p>{selectedLocation.description}</p>
+                    {selectedLocation.image && (
+                      <img
+                        src={selectedLocation.image}
+                        alt={selectedLocation.name}
+                        className="location-image"
+                      />
+                    )}
+                    {selectedLocation.features && (
+                      <ul className="location-features">
+                        {selectedLocation.features.mining && (
+                          <li>⛏️ Mining available</li>
+                        )}
+                        {selectedLocation.features.woodcutting && (
+                          <li>🌲 Woodcutting available</li>
+                        )}
+                        {selectedLocation.features.fishing && (
+                          <li>🎣 Fishing available</li>
+                        )}
+                        {selectedLocation.features.bank && (
+                          <li>🏦 Bank available</li>
+                        )}
+                        {selectedLocation.features.quests && (
+                          <li>📜 Quests available</li>
+                        )}
+                        {selectedLocation.features.shops && (
+                          <li>🛒 Shops available</li>
+                        )}
+                        {selectedLocation.features.farming && (
+                          <li>🌱 Farming available</li>
+                        )}
+                      </ul>
+                    )}
+                    <button
+                      className="travel-btn"
+                      onClick={handleTravel}
+                      disabled={selectedLocation.id === currentLocation}
+                    >
+                      {selectedLocation.id === currentLocation
+                        ? "You're Here"
+                        : `Travel to ${selectedLocation.name}`}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <h4>???</h4>
+                    <p className="location-hint">
+                      {selectedLocation.lockedHint ||
+                        "This location is locked."}
+                    </p>
+                    <img
+                      src="/assets/images/locations/locked-location.png"
+                      alt="Locked Location"
+                      className="location-image"
+                    />
+                  </>
                 )}
-
-                {selectedLocation.features && (
-                  <ul className="location-features">
-                    {selectedLocation.features.mining && <li>⛏️ Mining available</li>}
-                    {selectedLocation.features.woodcutting && <li>🌲 Woodcutting available</li>}
-                    {selectedLocation.features.fishing && <li>🎣 Fishing available</li>}
-                    {selectedLocation.features.bank && <li>🏦 Bank available</li>}
-                    {selectedLocation.features.quests && <li>📜 Quests available</li>}
-                    {selectedLocation.features.shops && <li>🛒 Shops available</li>}
-                    {selectedLocation.features.farming && <li>🌱 Farming available</li>}
-                  </ul>
-                )}
-
-                <button
-                  className="travel-btn"
-                  onClick={handleTravel}
-                  disabled={selectedLocation.id === currentLocation} // Disable if already here
-                >
-                  {selectedLocation.id === currentLocation ? "You're Here" : `Travel to ${selectedLocation.name}`}
-                </button>
               </div>
             )}
 
-            <button className="close-btn" onClick={closeModal}>Close</button>
+            <button className="close-btn" onClick={closeModal}>
+              Close
+            </button>
           </div>
         </div>
       )}

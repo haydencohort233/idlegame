@@ -49,6 +49,8 @@ const defaultState = {
   },
   inventory: [],
   inventoryCapacity: 30,
+  bankInventory: [],
+  bankCapacity: 10,
   resourceGatherCounts: {},
   equipped: {
     head: null,
@@ -65,7 +67,13 @@ const defaultState = {
   },
   buildings: {},
   location: "lumbridge",
+  unlockedLocations: ["lumbridge", "dark_forest"],
   visitedLocations: [],
+  isTraveling: false,
+  travelingto: null,
+  travelStartTime: null,
+  travelEndTime: null,
+  timeElapsed: 0,
   lastActive: Date.now(),
   autoSaveInterval: 30000, // 30 seconds
   farmingPatches: defaultFarmingPatches,
@@ -109,6 +117,11 @@ const mergedState = {
   skills: mergedSkills,
   achievements: savedState.achievements || defaultState.achievements,
   farmingPatches: { ...defaultState.farmingPatches, ...(savedState.farmingPatches || {}) },
+  isTraveling: savedState.isTraveling || defaultState.isTraveling,
+  travelingTo: savedState.travelingTo || defaultState.travelingTo,
+  travelStartTime: savedState.travelStartTime || defaultState.travelStartTime,
+  travelEndTime: savedState.travelEndTime || defaultState.travelEndTime,
+  timeElapsed: savedState.timeElapsed || defaultState.timeElapsed,
 };
 
 const usePlayerStore = create((set, get) => {
@@ -782,9 +795,40 @@ const usePlayerStore = create((set, get) => {
     },    
 
     travel: (newLocation) => {
-      set({ location: newLocation });
+      set({ location: newLocation, isTraveling: false, travelingTo: null, travelStartTime: null, travelEndTime: null, timeElapsed: 0 });
       saveState();
     },
+
+    startTravel: (destinationId, duration) => {
+      const startTime = Date.now();
+      const endTime = startTime + duration * 1000;
+      set({
+        isTraveling: true,
+        travelingTo: destinationId,
+        travelStartTime: startTime,
+        travelEndTime: endTime,
+        timeElapsed: 0,
+      });
+      saveState();
+    },
+
+    updateTravelProgress: () => {
+      if (get().isTraveling) {
+        const now = Date.now();
+        const elapsed = now - get().travelStartTime;
+        set({ timeElapsed: elapsed });
+        if (now >= get().travelEndTime) {
+          get().travel(get().travelingTo); // Use the existing travel action to finalize
+        }
+      }
+    },
+    cancelTravel: () => set({
+      isTraveling: false,
+      travelingTo: null,
+      travelStartTime: null,
+      travelEndTime: null,
+      timeElapsed: 0,
+    }, false, 'cancelTravel'),
 
     handleOfflineEarnings: () => {
       const lastActive = get().lastActive;
@@ -997,7 +1041,101 @@ const usePlayerStore = create((set, get) => {
       });
       saveState();
     },
-    // Add more here
+    depositItem: (itemId, requestedAmount) => {
+      set((state) => {
+        // 1) Find the item in user’s inventory
+        const invItem = state.inventory.find((i) => i.id === itemId);
+        if (!invItem) {
+          console.warn("Item not in inventory.");
+          return state;
+        }
+    
+        // 2) If requestedAmount > user’s quantity, clamp to their quantity
+        const amountToDeposit = Math.min(requestedAmount, invItem.quantity);
+    
+        // 3) Check distinct item capacity: if the item is new to the bank, 
+        //    and the bank is at capacity, block it.
+        const bankItem = state.bankInventory.find((b) => b.id === itemId);
+        const uniqueBankIds = new Set(state.bankInventory.map((b) => b.id));
+        const alreadyInBank = !!bankItem; // boolean
+        if (!alreadyInBank && uniqueBankIds.size >= state.bankCapacity) {
+          alert("Bank is full (max distinct items).");
+          return state; // no changes
+        }
+    
+        // 4) Actually remove from inventory
+        const updatedInventory = [...state.inventory].map((i) => {
+          if (i.id === itemId) {
+            return { ...i, quantity: i.quantity - amountToDeposit };
+          }
+          return i;
+        }).filter((i) => i.quantity > 0);
+    
+        // 5) Add to bank
+        let updatedBank = [...state.bankInventory];
+        if (bankItem) {
+          bankItem.quantity += amountToDeposit;
+        } else {
+          updatedBank.push({ id: itemId, quantity: amountToDeposit });
+        }
+    
+        return {
+          inventory: updatedInventory,
+          bankInventory: updatedBank,
+        };
+      });
+      saveState();
+    },    
+    
+    withdrawItem: (itemId, requestedAmount) => {
+      set((state) => {
+        const bankItem = state.bankInventory.find((b) => b.id === itemId);
+        if (!bankItem) {
+          console.warn("Item not in bank.");
+          return state;
+        }
+    
+        // If user requests more than the bank has, clamp to the bank’s quantity
+        const amountToWithdraw = Math.min(requestedAmount, bankItem.quantity);
+    
+        // Remove from bank
+        const updatedBank = [...state.bankInventory].map((b) => {
+          if (b.id === itemId) {
+            return { ...b, quantity: b.quantity - amountToWithdraw };
+          }
+          return b;
+        }).filter((b) => b.quantity > 0);
+    
+        // Add to inventory
+        let updatedInventory = [...state.inventory];
+        const invItem = updatedInventory.find((i) => i.id === itemId);
+        if (invItem) {
+          invItem.quantity += amountToWithdraw;
+        } else {
+          updatedInventory.push({ id: itemId, quantity: amountToWithdraw });
+        }
+    
+        return {
+          bankInventory: updatedBank,
+          inventory: updatedInventory,
+        };
+      });
+      saveState();
+    },
+    
+    expandBankCapacity: (extraSlots) => {
+      set((state) => ({
+        bankCapacity: state.bankCapacity + extraSlots
+      }));
+      saveState();
+    },
+    
+    unlockLocation: (locationId) => {
+      set((state) => ({
+        unlockedLocations: [...new Set([...state.unlockedLocations, locationId])]
+      }));
+      saveState();
+    }
   };
 });
 

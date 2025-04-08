@@ -1,0 +1,24 @@
+{
+    "nodes": {
+      "lumbridge": { "id": "lumbridge", "name": "Lumbridge", "x": 900, "y": 760 },
+      "barbarian_outpost": { "id": "barbarian_outpost", "name": "Barbarian Outpost", "x": 1105, "y": 1180 },
+      "dark_forest": { "id": "dark_forest", "name": "Dark Forest", "x": 1220, "y": 580 },
+      "snowy_mountains": { "id": "snowy_mountains", "name": "Snowy Mountains", "x": 1500, "y": 900 },
+      "falador": {
+        "id": "falador",
+        "name": "Falador",
+        "x": 1500,
+        "y": 1400,
+        "locked": true,
+        "unlockRequirement": "falador_key",
+        "lockedHint": "Unlocked by using Falador Key"
+      }
+    },
+    "edges": [
+      { "from": "lumbridge", "to": "dark_forest", "time": 15 },
+      { "from": "dark_forest", "to": "snowy_mountains", "time": 20 },
+      { "from": "snowy_mountains", "to": "barbarian_outpost", "time": 25 },
+      { "from": "snowy_mountains", "to": "falador", "time": 15 }
+    ]
+  }
+  

@@ -9,92 +9,91 @@
           "id": "bronze_axe",
           "price": 1000,
           "stock": 5,
-          "restockInterval": 60000,
-          "description": "A soft pickaxe. This will have to work."
+          "restockInterval": 60000
         },
         {
           "id": "dragon_axe",
           "price": 1000,
           "stock": 5,
-          "restockInterval": 60000,
-          "description": "A soft pickaxe. This will have to work."
+          "restockInterval": 60000
         },
         {
           "id": "bronze_pickaxe",
           "price": 1000,
           "stock": 5,
-          "restockInterval": 60000,
-          "description": "A soft pickaxe. This will have to work."
+          "restockInterval": 60000
         },
         {
           "id": "dragon_pickaxe",
           "price": 10000,
           "stock": 5,
-          "restockInterval": 60000,
-          "description": "A pickaxe made of dragon scales."
+          "restockInterval": 60000
         },
         {
           "id": "fishing_net",
           "price": 500,
           "stock": 5,
-          "restockInterval": 60000,
-          "description": "A sturdy iron sword."
+          "restockInterval": 60000
         },
         {
           "id": "lobster_pot",
           "price": 500,
           "stock": 5,
-          "restockInterval": 60000,
-          "description": "A sturdy iron sword."
+          "restockInterval": 60000
         },
         {
           "id": "fishing_rod",
           "price": 500,
           "stock": 5,
-          "restockInterval": 60000,
-          "description": "A sturdy iron sword."
+          "restockInterval": 60000
         },
         {
           "id": "fishing_bait",
           "price": 500,
           "stock": 100,
-          "restockInterval": 1000,
-          "description": "A sturdy iron sword."
+          "restockInterval": 1000
         },
         {
           "id": "potato_seeds",
           "price": 50,
           "stock": 100,
-          "restockInterval": 1000,
-          "description": "A sturdy iron sword."
+          "restockInterval": 1000
         },
         {
           "id": "watermelon_seeds",
           "price": 50,
           "stock": 100,
-          "restockInterval": 1000,
-          "description": "A sturdy iron sword."
+          "restockInterval": 1000
         },
         {
           "id": "cabbage_seeds",
           "price": 50,
           "stock": 100,
-          "restockInterval": 1000,
-          "description": "A sturdy iron sword."
+          "restockInterval": 1000
         },
         {
           "id": "spade",
           "price": 500,
           "stock": 100,
-          "restockInterval": 1000,
-          "description": "A sturdy iron sword."
+          "restockInterval": 1000
         },
         {
           "id": "oak_sapling",
           "price": 50,
           "stock": 100,
-          "restockInterval": 1000,
-          "description": "A sturdy iron sword."
+          "restockInterval": 1000
+        },
+        {
+          "id": "bank_key",
+          "price": 50,
+          "stock": 100,
+          "restockInterval": 1000
+        },
+        {
+          "id": "falador_key",
+          "price": 0,
+          "stock": 1,
+          "restockInterval": 1000
         }
       ]
     },

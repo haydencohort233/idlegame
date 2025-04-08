@@ -4,8 +4,9 @@
     "name": "Lumbridge",
     "description": "A friendly town.",
     "image": "/assets/images/locations/lumbridge.png",
+    "icon": "/assets/images/locations/icons/lumbridge.png",
     "features": {
-      "mining": true,
+      "mining": false,
       "woodcutting": true,
       "fishing": true,
       "farming": true,
@@ -17,12 +18,29 @@
     "name": "Dark Forest",
     "description": "A mysterious forest.",
     "image": "/assets/images/locations/varrock.png",
+    "icon": "/assets/images/locations/icons/dark_forest.png",
     "features": {
       "mining": true,
       "woodcutting": true,
       "fishing": true,
       "farming": true,
       "bank": false
+    }
+  },
+  "falador": {
+    "id": "falador",
+    "name": "Falador",
+    "description": "A walled city with white knights.",
+    "image": "/assets/images/locations/falador.png",
+    "icon": "/assets/images/locations/icons/falador.png",
+    "locked": true,
+    "lockedHint": "Unlocked by using Falador Key",
+    "features": {
+      "mining": false,
+      "woodcutting": false,
+      "fishing": true,
+      "bank": true,
+      "farming": true
     }
   }
 }

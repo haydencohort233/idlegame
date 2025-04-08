@@ -14,6 +14,8 @@ import "./css/TabNav.css";
 import Fishing from "./components/Fishing";
 import Woodcutting from "./components/Woodcutting";
 import Farming from "./components/Farming";
+import Bank from "./components/Bank";
+import WorldMap from "./components/WorldMap";
 
 function App() {
   const handleOfflineEarnings = usePlayerStore((state) => state.handleOfflineEarnings);
@@ -75,7 +77,9 @@ function App() {
           {currentLocationData.features?.woodcutting && <Woodcutting />}
           {currentLocationData.features?.mining && <Mining />}
           {currentLocationData.features?.fishing && <Fishing />}
+          {currentLocationData.features?.fishing && <Bank />}
           <LocationsMap />
+          <WorldMap />
           <Inventory />
           <Equipment />
         </>
