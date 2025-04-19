@@ -1,0 +1,73 @@
+.enemy-selection {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-start;
+}
+
+.enemy-card {
+  border: 2px solid;
+  border-radius: 8px;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.enemy-card.available {
+  border-color: green;
+  opacity: 1;
+}
+
+.enemy-card.cooldown {
+  border-color: gray;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.enemy-image-container {
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+
+.enemy-image {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.cooldown-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(128, 128, 128, 0.5);
+  pointer-events: none;
+  transition: height 1s linear;
+}
+
+.cooldown-clock {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: red;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.enemy-name {
+  margin: 0;
+  text-align: center;
+}
+
+.enemy-buttons {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.enemy-buttons button {
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+}

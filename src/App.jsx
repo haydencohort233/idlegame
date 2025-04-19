@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import usePlayerStore from "./store/usePlayerStore";
+import useCombatStore from "./store/combatStore";
 import PlayerStats from "./components/PlayerStats";
 import Inventory from "./components/Inventory";
 import Equipment from "./components/Equipment";
@@ -16,17 +17,26 @@ import Woodcutting from "./components/Woodcutting";
 import Farming from "./components/Farming";
 import Bank from "./components/Bank";
 import WorldMap from "./components/WorldMap";
+import EnemySelection from "./components/EnemySelection";
+import { handleSelectEnemy } from "./utils/enemyHandlers";
+import CombatScreen from "./components/CombatScreen";
+import useCurrentTime from "./hooks/useCurrentTime";
+import AutoAttackToggle from "./components/AutoAttackToggle";
 
 function App() {
   const handleOfflineEarnings = usePlayerStore((state) => state.handleOfflineEarnings);
   const handleOfflineSkillProgression = usePlayerStore((state) => state.handleOfflineSkillProgression);
   const gainGold = usePlayerStore((state) => state.gainGold);
   const location = usePlayerStore((state) => state.location);
+  const inCombat = useCombatStore((state) => state.inCombat);
   const [offlineGoldMessage, setOfflineGoldMessage] = useState("");
   const [currentTab, setCurrentTab] = useState("home");
 
   // Get current location data from JSON
   const currentLocationData = locationsData[location] || {};
+
+    // Get current time from our custom hook.
+    const currentTime = useCurrentTime();
 
   useEffect(() => {
     const goldGained = handleOfflineEarnings();
@@ -37,9 +47,19 @@ function App() {
     return () => clearInterval(interval);
   }, [handleOfflineEarnings, handleOfflineSkillProgression, gainGold]);
 
+  useEffect(() => {
+    const regenInterval = setInterval(() => {
+      if (!inCombat) { // Only regenerate when not in combat.
+        usePlayerStore.getState().regenerateHealth();
+      }
+    }, 60000);
+    return () => clearInterval(regenInterval);
+  }, [inCombat]);
+
   return (
     <div>
-      {/* Tab Navigation */}
+      {inCombat && <CombatScreen />}
+
       <nav className="tab-nav">
         <button 
           className={currentTab === "home" ? "active" : ""}
@@ -78,7 +98,11 @@ function App() {
           {currentLocationData.features?.mining && <Mining />}
           {currentLocationData.features?.fishing && <Fishing />}
           {currentLocationData.features?.fishing && <Bank />}
-          <LocationsMap />
+          {currentLocationData.features?.enemies && (
+            <>
+              <EnemySelection onSelectEnemy={handleSelectEnemy} currentTime={currentTime} />
+            </>
+          )}
           <WorldMap />
           <Inventory />
           <Equipment />

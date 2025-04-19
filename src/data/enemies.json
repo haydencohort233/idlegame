@@ -1,0 +1,59 @@
+[
+    {
+      "id": "giant_rat",
+      "name": "Giant Rat",
+      "combatLevel": 1,
+      "stats": {
+        "hp": 10,
+        "attack": 0.5,
+        "strength": 2,
+        "defence": 1
+      },
+      "spawnAreas": ["sewers", "dungeon"],
+      "image": "/assets/images/enemies/giant_rat.png",
+      "loot": [
+        { "itemId": "rat_tail", "chance": 0.5 },
+        { "itemId": "scrap_fur", "chance": 0.3 }
+      ],
+      "modifierTags": []
+    },
+    {
+      "id": "goblin",
+      "name": "Goblin",
+      "combatLevel": 2,
+      "stats": {
+        "hp": 20,
+        "attack": 0.5,
+        "strength": 0.5,
+        "defence": 0.0
+      },
+      "cooldown": 10,
+      "spawnAreas": ["dark_forest"],
+      "image": "/assets/images/enemies/goblin.png",
+      "loot": [
+        { "itemId": "shark", "chance": 1.0 },
+        { "itemId": "rusty_dagger", "chance": 0.1 }
+      ],
+      "modifierTags": []
+    },
+    {
+      "id": "elvarg",
+      "name": "Elvarg",
+      "combatLevel": 10,
+      "stats": {
+        "hp": 150,
+        "attack": 0.7,
+        "strength": 10,
+        "defence": 5
+      },
+      "spawnAreas": ["dragon_lair"],
+      "image": "/assets/images/enemies/elvarg.png",
+      "loot": [
+        { "itemId": "dragon_scale", "chance": 0.3 },
+        { "itemId": "sword_of_legends", "chance": 0.05 }
+      ],
+      "modifierTags": ["legendary"],
+      "questEnemy": true
+    }
+  ]
+  

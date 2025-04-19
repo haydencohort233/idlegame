@@ -1,0 +1,27 @@
+/* /src/css/AutoAttackToggle.css */
+.auto-attack-toggle {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border: none;
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .auto-attack-toggle.enabled {
+    background-color: green;
+  }
+  
+  .auto-attack-toggle.disabled {
+    background-color: red;
+  }
+  
+  .auto-attack-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    object-fit: contain;
+  }
+  

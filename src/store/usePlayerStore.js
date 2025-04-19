@@ -30,22 +30,27 @@ const defaultState = {
   exp: 0,
   gold: 0,
   stats: { 
-    attack: 1, 
-    defence: 1, 
-    magic: 1, 
     health: 10, 
     speed: 1,
     criticalChance: 10,
     criticalMultiplier: 1.5,
     accuracy: 100
   },
+  currentHealth: 10,
   skills: { 
-    mining: { level: 1, exp: 0, totalExp: 0 }, 
-    fishing: { level: 1, exp: 0, totalExp: 0 }, 
+    mining:   { level: 1, exp: 0, totalExp: 0 }, 
+    fishing:  { level: 1, exp: 0, totalExp: 0 }, 
     crafting: { level: 1, exp: 0, totalExp: 0 }, 
-    agility: { level: 1, exp: 0, totalExp: 0 },
+    agility:  { level: 1, exp: 0, totalExp: 0 },
     woodcutting: { level: 1, exp: 0, totalExp: 0 },
-    farming: { level: 1, exp: 0, totalExp: 0 }
+    farming:     { level: 1, exp: 0, totalExp: 0 },
+    combat: {
+      attack:   { level: 1, exp: 0, totalExp: 0 },
+      strength: { level: 1, exp: 0, totalExp: 0 },
+      defence:  { level: 1, exp: 0, totalExp: 0 },
+      magic:    { level: 1, exp: 0, totalExp: 0 },
+      ranged:   { level: 1, exp: 0, totalExp: 0 },
+    }
   },
   inventory: [],
   inventoryCapacity: 30,
@@ -82,6 +87,8 @@ const defaultState = {
     acc[key] = { progress: 0, completed: false, claimed: false };
     return acc;
   }, {}),
+  enemyKillCounts: {},
+  enemyCooldowns: {},
   // activeSkillTask will be stored as a serializable object:
   // { timerId, taskKey, taskData, startTime, interval }
   playerStats: {
@@ -948,32 +955,47 @@ const usePlayerStore = create((set, get) => {
         console.error(`Item with ID "${itemId}" not found.`);
         return;
       }
-      // Update validTypes to include "tool"
-      const validTypes = ["head", "neck", "back", "chest", "legs", "feet", "hands", "weapon", "shield", "ring", "tool"];
-      if (validTypes.includes(item.type)) {
-        set((state) => {
-          const inventoryItem = state.inventory.find(i => i.id === item.id);
-          if (!inventoryItem || inventoryItem.quantity <= 0) return state;
-          let updatedInventory = state.inventory.map(i =>
-            i.id === item.id ? { ...i, quantity: Math.max((i.quantity || 1) - 1, 0) } : i
-          ).filter(i => i.quantity > 0);
-          
-          // If the item type is tool, place it in the "tool" slot
-          const slot = item.type;
-          const previousItem = state.equipped[slot];
-          if (previousItem) {
-            updatedInventory.push({ ...previousItem, quantity: 1 });
-          }
-          
-          const newEquipped = { ...state.equipped, [slot]: item };
-          const newStats = calculateTotalStats(newEquipped);
-          return { equipped: newEquipped, inventory: updatedInventory, stats: newStats };
-        });
-        saveState();
-      } else {
+    
+      // slots that can be equipped
+      const validTypes = [
+        "head", "neck", "back", "chest",
+        "legs", "feet", "hands", "weapon",
+        "shield", "ring", "tool"
+      ];
+      if (!validTypes.includes(item.type)) {
         console.error(`Invalid item type: ${item.type}`);
+        return;
       }
-    },    
+    
+      set((state) => {
+        // take one from inventory
+        const invEntry = state.inventory.find(i => i.id === item.id);
+        if (!invEntry || invEntry.quantity <= 0) return state;
+        const updatedInventory = state.inventory
+          .map(i =>
+            i.id === item.id
+              ? { ...i, quantity: i.quantity - 1 }
+              : i
+          )
+          .filter(i => i.quantity > 0);
+    
+        // unequip any existing in that slot
+        const slot = item.type;
+        const old = state.equipped[slot];
+        if (old) {
+          updatedInventory.push({ ...old, quantity: 1 });
+        }
+    
+        // equip the new item
+        const newEquipped = { ...state.equipped, [slot]: item };
+        return {
+          equipped: newEquipped,
+          inventory: updatedInventory
+        };
+      });
+    
+      saveState();
+    },       
 
     unequipItem: (slot) => {
       set((state) => {
@@ -1135,7 +1157,25 @@ const usePlayerStore = create((set, get) => {
         unlockedLocations: [...new Set([...state.unlockedLocations, locationId])]
       }));
       saveState();
-    }
+    },
+
+    incrementEnemyKill: (enemyId) => set((state) => {
+      const currentCount = state.enemyKillCounts[enemyId] || 0;
+      return { enemyKillCounts: { ...state.enemyKillCounts, [enemyId]: currentCount + 1 } };
+    }),
+
+    setEnemyCooldown: (enemyId, cooldownMs) => set((state) => {
+      const cooldownTime = Date.now() + cooldownMs;
+      return { enemyCooldowns: { ...state.enemyCooldowns, [enemyId]: cooldownTime } };
+    }),
+
+    regenerateHealth: () =>
+      set((state) => ({
+        currentHealth:
+          state.currentHealth < state.stats.health
+            ? Math.min(state.currentHealth + 1, state.stats.health)
+            : state.currentHealth,
+      }))
   };
 });
 

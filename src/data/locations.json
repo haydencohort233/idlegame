@@ -11,7 +11,8 @@
       "fishing": true,
       "farming": true,
       "bank": true
-    }
+    },
+    "enemies": false
   },
   "dark_forest": {
     "id": "dark_forest",
@@ -24,8 +25,10 @@
       "woodcutting": true,
       "fishing": true,
       "farming": true,
-      "bank": false
-    }
+      "bank": false,
+      "enemies": true
+    },
+    "enemies": true
   },
   "falador": {
     "id": "falador",
@@ -42,5 +45,6 @@
       "bank": true,
       "farming": true
     }
-  }
+  },
+  "enemies": false
 }

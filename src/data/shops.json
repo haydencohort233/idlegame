@@ -84,6 +84,12 @@
           "restockInterval": 1000
         },
         {
+          "id": "shark",
+          "price": 100,
+          "stock": 50,
+          "restockInterval": 1000
+        },
+        {
           "id": "bank_key",
           "price": 50,
           "stock": 100,
@@ -126,6 +132,13 @@
         },
         {
           "id": "robe_bottom",
+          "price": 500,
+          "stock": 1,
+          "restockInterval": 60000,
+          "description": "A sturdy iron sword."
+        },
+        {
+          "id": "iron_sword",
           "price": 500,
           "stock": 1,
           "restockInterval": 60000,

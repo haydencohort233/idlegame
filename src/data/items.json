@@ -131,7 +131,7 @@
       "id": "leather_boots",
       "name": "Leather Boots",
       "type": "feet",
-      "defence_bonus": 3,
+      "magic_bonus": 3,
       "value": 20,
       "image": "/assets/images/items/armor/leather_boots.png",
       "description": "A cabbage, ick."
@@ -241,6 +241,15 @@
       "heal": 20,
       "value": 5,
       "image": "/assets/images/items/fishing/raw_shark.png",
+      "description": "A cabbage, ick."
+    },
+    "shark": {
+      "id": "shark",
+      "name": "Shark",
+      "type": "consumable",
+      "heal": 20,
+      "value": 5,
+      "image": "/assets/images/items/food/shark.png",
       "description": "A cabbage, ick."
     },
     "raw_shrimps": {

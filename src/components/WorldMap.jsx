@@ -373,6 +373,7 @@ function WorldMapModal() {
       { key: "fishing", label: "Fishing", icon: "🎣" },
       { key: "bank", label: "Banking", icon: "🏦" },
       { key: "woodcutting", label: "Woodcutting", icon: "🌳" },
+      { key: "enemies", label: "Enemies", icon: "⚔️" },
     ];
   
     return (
