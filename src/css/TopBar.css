@@ -1,0 +1,33 @@
+/* /src/css/TopBar.css */
+.top-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: #969191;
+    padding: 8px 0;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    z-index: 9000;
+  }
+  
+  .top-bar button {
+    background: none;
+    border: none;
+    color: #ffffff;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .top-bar button.active {
+    color: #fff;
+    border-top: 3px solid #ffffff;
+    background-color: #4b4a4a;
+  }
+  
+  /* ensure main content isn’t hidden behind the bars */
+  .app .main-content {
+    padding-top: 48px;    /* height of top-bar */
+    padding-bottom: 48px; /* height of bottom-bar */
+  }
+  

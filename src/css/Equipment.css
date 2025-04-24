@@ -1,0 +1,43 @@
+.equipment-container {
+    position: relative;
+    width: 280px;
+    background: url("/assets/images/character-silhouette.png") 
+                center / contain no-repeat;
+    margin: auto;
+  }
+  
+  .equipment-slot {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 4px;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .equipment-slot.head    { top:  20px; left: calc(50% - 20px); }
+  .equipment-slot.weapon  { top: 120px; left: calc(50% - 70px); }
+  .equipment-slot.shield  { top: 120px; left: calc(50% + 30px); }
+  .equipment-slot.chest   { top: 120px; left: calc(50% - 20px); }
+  .equipment-slot.legs    { top: 170px; left: calc(50% - 20px); }
+  .equipment-slot.feet    { top: 220px; left: calc(50% - 20px); }
+  .equipment-slot.tool    { top: 220px; left: calc(50% - 70px); }
+  .equipment-slot.hands    { top: 170px; left: calc(50% - 70px); }
+  .equipment-slot.neck    { top: 70px; left: calc(50% - 20px); }
+  .equipment-slot.ring    { top: 220px; left: calc(50% + 30px); }
+  .equipment-slot.back    { top: 70px; left: calc(50% - 70px); }
+
+  @media (max-width: 400px) {
+    .equipment-container {
+      width: 180px;
+      padding-top: 310px;
+    }
+    .equipment-slot {
+      width: 28px;
+      height: 28px;
+    }
+  }
+  

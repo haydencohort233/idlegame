@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+// App.jsx
+import React, { useEffect, useState } from "react";
 import usePlayerStore from "./store/usePlayerStore";
 import useCombatStore from "./store/combatStore";
 import PlayerStats from "./components/PlayerStats";
@@ -11,7 +12,6 @@ import locationsData from "./data/locations.json";
 import Achievements from "./components/Achievements";
 import ShopList from "./components/ShopList";
 import Statistics from "./components/Statistics";
-import "./css/TabNav.css";
 import Fishing from "./components/Fishing";
 import Woodcutting from "./components/Woodcutting";
 import Farming from "./components/Farming";
@@ -21,103 +21,187 @@ import EnemySelection from "./components/EnemySelection";
 import { handleSelectEnemy } from "./utils/enemyHandlers";
 import CombatScreen from "./components/CombatScreen";
 import useCurrentTime from "./hooks/useCurrentTime";
-import AutoAttackToggle from "./components/AutoAttackToggle";
+import {FaHome, FaBrain, FaTrophy, FaChartBar, FaBoxOpen, FaShieldAlt, FaGlobe} from "react-icons/fa";
+import "./css/TabNav.css";
+import "./css/Equipment.css";
+import "./css/Modal.css";
+import "./css/BottomBar.css";
+import "./css/TopBar.css";
+
+// hoist Modal out of App so it’s stable
+function Modal({ children, onClose, fullScreen = false }) {
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div
+        className={
+          "modal-content" + (fullScreen ? " full-screen" : "")
+        }
+        onClick={(e) => e.stopPropagation()}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
 
 function App() {
-  const handleOfflineEarnings = usePlayerStore((state) => state.handleOfflineEarnings);
-  const handleOfflineSkillProgression = usePlayerStore((state) => state.handleOfflineSkillProgression);
-  const gainGold = usePlayerStore((state) => state.gainGold);
-  const location = usePlayerStore((state) => state.location);
-  const inCombat = useCombatStore((state) => state.inCombat);
-  const [offlineGoldMessage, setOfflineGoldMessage] = useState("");
+  const handleOfflineEarnings = usePlayerStore((s) => s.handleOfflineEarnings);
+  const handleOfflineSkillProgression = usePlayerStore((s) => s.handleOfflineSkillProgression);
+  const gainGold = usePlayerStore((s) => s.gainGold);
+  const location = usePlayerStore((s) => s.location);
+  const inCombat = useCombatStore((s) => s.inCombat);
+
   const [currentTab, setCurrentTab] = useState("home");
+  const [openBottomModal, setOpenBottomModal] = useState(null);
 
-  // Get current location data from JSON
   const currentLocationData = locationsData[location] || {};
-
-    // Get current time from our custom hook.
-    const currentTime = useCurrentTime();
+  const currentTime = useCurrentTime();
 
   useEffect(() => {
-    const goldGained = handleOfflineEarnings();
-    const offlineTicks = handleOfflineSkillProgression();
-    const interval = setInterval(() => {
-      gainGold(10);
-    }, 1000);
+    handleOfflineEarnings();
+    handleOfflineSkillProgression();
+    const interval = setInterval(() => gainGold(10), 1000);
     return () => clearInterval(interval);
   }, [handleOfflineEarnings, handleOfflineSkillProgression, gainGold]);
 
   useEffect(() => {
-    const regenInterval = setInterval(() => {
-      if (!inCombat) { // Only regenerate when not in combat.
-        usePlayerStore.getState().regenerateHealth();
-      }
+    const regen = setInterval(() => {
+      if (!inCombat) usePlayerStore.getState().regenerateHealth();
     }, 60000);
-    return () => clearInterval(regenInterval);
+    return () => clearInterval(regen);
   }, [inCombat]);
 
   return (
-    <div>
+    <div className="app">
       {inCombat && <CombatScreen />}
+      {(openBottomModal === "inventory" || openBottomModal === "equipment") && (
+        <Modal onClose={() => setOpenBottomModal(null)}>
+          {openBottomModal === "inventory" && <Inventory />}
+          {openBottomModal === "equipment"  && <Equipment />}
+        </Modal>
+      )}
+      {openBottomModal === "worldMap" && (
+        <WorldMap onClose={() => setOpenBottomModal(null)} />
+      )}
 
-      <nav className="tab-nav">
-        <button 
+      <nav className="top-bar">
+        <button
           className={currentTab === "home" ? "active" : ""}
-          onClick={() => setCurrentTab("home")}
+          onClick={() => {
+            if (currentTab !== "home") {
+              setCurrentTab("home");
+              setOpenBottomModal(null);
+            }
+          }}
         >
+          <FaHome size={16} style={{ marginRight: 6 }} />
           Home
         </button>
-        <button 
+        <button
           className={currentTab === "skills" ? "active" : ""}
-          onClick={() => setCurrentTab("skills")}
+          onClick={() => {
+            if (currentTab !== "skills") {
+              setCurrentTab("skills");
+              setOpenBottomModal(null);
+            }
+          }}
         >
+          <FaBrain size={16} style={{ marginRight: 6 }} />
           Skills
         </button>
-        <button 
+        <button
           className={currentTab === "achievements" ? "active" : ""}
-          onClick={() => setCurrentTab("achievements")}
+          onClick={() => {
+            if (currentTab !== "achievements") {
+              setCurrentTab("achievements");
+              setOpenBottomModal(null);
+            }
+          }}
         >
+          <FaTrophy size={16} style={{ marginRight: 6 }} />
           Achievements
         </button>
-        <button 
+        <button
           className={currentTab === "stats" ? "active" : ""}
-          onClick={() => setCurrentTab("stats")}
+          onClick={() => {
+            if (currentTab !== "stats") {
+              setCurrentTab("stats");
+              setOpenBottomModal(null);
+            }
+          }}
         >
+          <FaChartBar size={16} style={{ marginRight: 6 }} />
           Statistics
         </button>
       </nav>
-      
-      {offlineGoldMessage && <p>{offlineGoldMessage}</p>}
-      
-      {currentTab === "home" && (
-        <>
-        <PlayerStats />
-          <ShopList />
-          {currentLocationData.features?.fishing && <Farming />}
-          {currentLocationData.features?.woodcutting && <Woodcutting />}
-          {currentLocationData.features?.mining && <Mining />}
-          {currentLocationData.features?.fishing && <Fishing />}
-          {currentLocationData.features?.fishing && <Bank />}
-          {currentLocationData.features?.enemies && (
-            <>
-              <EnemySelection onSelectEnemy={handleSelectEnemy} currentTime={currentTime} />
-            </>
-          )}
-          <WorldMap />
-          <Inventory />
-          <Equipment />
-        </>
-      )}
 
-        {currentTab === "skills" && (
-            <>
-            <PlayerSkills />
-            </>
-    )}
-      
-      {currentTab === "stats" && <Statistics />}
+      <main className="main-content">
+        {currentTab === "home" && (
+          <>
+            <PlayerStats />
+            <ShopList />
+            {currentLocationData.features?.mining && <Mining />}
+            {currentLocationData.features?.woodcutting && <Woodcutting />}
+            {currentLocationData.features?.fishing && <Fishing />}
+            {currentLocationData.features?.fishing && <Bank />}
+            {currentLocationData.features?.farming && <Farming />}
+            {currentLocationData.features?.enemies && (
+              <EnemySelection
+                onSelectEnemy={handleSelectEnemy}
+                currentTime={currentTime}
+              />
+            )}
+            <LocationsMap />
+          </>
+        )}
+        {currentTab === "skills" && <PlayerSkills />}
+        {currentTab === "stats" && <Statistics />}
+        {currentTab === "achievements" && <Achievements />}
+      </main>
 
-      {currentTab === "achievements" && <Achievements />}
+      <footer className="bottom-bar">
+        <button
+          className={openBottomModal === "inventory" ? "active" : ""}
+          onClick={() =>
+            setOpenBottomModal(
+              openBottomModal === "inventory" ? null : "inventory"
+            )
+          }
+        >
+          <FaBoxOpen size={20} style={{ marginRight: 6 }} />
+          Inventory
+        </button>
+        <button
+          className={openBottomModal === "equipment" ? "active" : ""}
+          onClick={() =>
+            setOpenBottomModal(
+              openBottomModal === "equipment" ? null : "equipment"
+            )
+          }
+        >
+          <FaShieldAlt size={20} style={{ marginRight: 6 }} />
+          Equipment
+        </button>
+        <button
+          className={openBottomModal === "worldMap" ? "active" : ""}
+          onClick={() =>
+            setOpenBottomModal(
+              openBottomModal === "worldMap" ? null : "worldMap"
+            )
+          }
+        >
+          <FaGlobe size={20} style={{ marginRight: 6 }} />
+          World Map
+        </button>
+      </footer>
     </div>
   );
 }

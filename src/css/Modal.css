@@ -1,0 +1,33 @@
+/* /src/css/Modal.css */
+
+.modal-backdrop {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    padding: 16px;
+    border-radius: 8px;
+    /* make it fill most of the screen so Inventory/Equipment/Map aren’t tiny */
+    width: 90vw;
+    max-width: 800px;
+    height: 80vh;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .modal-content.full-screen {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+    overflow: hidden;
+  }
+  

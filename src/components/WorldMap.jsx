@@ -46,8 +46,26 @@ const calculateRoute = (startId, endId, mapData) => {
   return { route, totalTime: distances[endId] };
 };
 
-function WorldMapModal() {
-  const [isOpen, setIsOpen] = useState(false);
+function WorldMap({ onClose }) {
+  const modalSize = { width: window.innerWidth, height: window.innerHeight };
+  const imageWidth = 4618, imageHeight = 3284, defaultScale = 0.5;
+  const constrainOffset = (x, y, s) => {
+    const scaledW = imageWidth * s;
+    const scaledH = imageHeight * s;
+    const minX = Math.min(0, modalSize.width - scaledW);
+    const minY = Math.min(0, modalSize.height - scaledH);
+    return {
+      x: Math.min(0, Math.max(x, minX)),
+      y: Math.min(0, Math.max(y, minY)),
+    };
+  };
+
+  const centerOnPoint = (px, py, s) => {
+    const x = modalSize.width / 2 - px * s;
+    const y = modalSize.height / 2 - py * s;
+    return constrainOffset(x, y, s);
+  };
+
   const [selectedNode, setSelectedNode] = useState(null);
   const [previewPath, setPreviewPath] = useState([]);
   const [segmentTimes, setSegmentTimes] = useState([]);
@@ -69,9 +87,7 @@ function WorldMapModal() {
   const currentLocation = usePlayerStore((state) => state.location);
   const unlockedLocations = usePlayerStore((state) => state.unlockedLocations);
 
-  // Get current node from worldMapData using currentLocation from the store
   const currentNode = worldMapData.nodes[currentLocation];
-
   const elapsedTime = isTraveling ? Math.floor(timeElapsed / 1000) : 0;
   const progressPercent =
     isTraveling && travelEndTime
@@ -89,39 +105,20 @@ function WorldMapModal() {
   const handleMapImageError = () => {
     setMapImageError(true);
     alert("Error Loading World Map");
-    setIsOpen(false);
   };
 
-  const modalSize = { width: window.innerWidth, height: window.innerHeight };
-
-  // Map image dimensions and zoom state
-  const imageWidth = 4618;
-  const imageHeight = 3284;
-  const defaultScale = 0.5;
-  const [scale, setScale] = useState(defaultScale);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [lastDragPos, setLastDragPos] = useState({ x: 0, y: 0 });
 
+// center on the player on first render, never again
+const [scale, setScale] = useState(defaultScale);
+const [offset, setOffset] = useState(() => {
+     const initial = centerOnPoint(currentNode.x, currentNode.y, defaultScale);
+     console.log("[WorldMap] initial offset:", initial);
+     return initial;
+   });
+
   // Constrain offset so the image always covers the modal viewport
-  const constrainOffset = (x, y, s) => {
-    const scaledW = imageWidth * s;
-    const scaledH = imageHeight * s;
-    const minX = Math.min(0, modalSize.width - scaledW);
-    const minY = Math.min(0, modalSize.height - scaledH);
-    return {
-      x: Math.min(0, Math.max(x, minX)),
-      y: Math.min(0, Math.max(y, minY)),
-    };
-  };
-
-  // Center the view on the player
-  const centerOnPoint = (px, py, s) => {
-    const x = modalSize.width / 2 - px * s;
-    const y = modalSize.height / 2 - py * s;
-    return constrainOffset(x, y, s);
-  };
-
   const transformPoint = useMemo(
     () => (pt) => ({
       x: pt.x * scale + offset.x,
@@ -130,30 +127,37 @@ function WorldMapModal() {
     [scale, offset]
   );
 
-  const openModal = () => {
-    setIsOpen(true);
-    setScale(defaultScale);
-    if (currentNode) {
-      setOffset(centerOnPoint(currentNode.x, currentNode.y, defaultScale));
-    }
-    
-    // If currently traveling, recalculate and set the preview route.
-    if (isTraveling) {
+  useEffect(() => {
+    if (isTraveling && travelingTo != null) {
       const { route } = calculateRoute(currentLocation, travelingTo, worldMapData);
-      const routeCoords = route.map((nodeId) => worldMapData.nodes[nodeId]);
-      const segTimes = calculateSegmentTimes(route);
-      setPreviewPath(routeCoords);
-      setSegmentTimes(segTimes);
+      const coords = route.map((id) => worldMapData.nodes[id]);
+      setPreviewPath(coords);
+      // compute segment times
+      const times = [];
+      for (let i = 0; i < route.length - 1; i++) {
+        const from = route[i], to = route[i + 1];
+        const edge = worldMapData.edges.find(
+          (e) =>
+            (e.from === from && e.to === to) ||
+            (e.from === to && e.to === from)
+        );
+        times.push(edge ? edge.time : 0);
+      }
+      setSegmentTimes(times);
       setSelectedNode(worldMapData.nodes[travelingTo]);
-    } else {
-      setSelectedNode(null);
-      setPreviewPath([]);
+      setIsInfoPanelOpen(true);
     }
-  };  
+  }, []);
 
-  const closeModal = () => setIsOpen(false);
+  // Displays current location information when opened
+  useEffect(() => {
+    if (!isTraveling) {
+      setSelectedNode(worldMapData.nodes[currentLocation]);
+      setIsInfoPanelOpen(true);
+    }
+  }, []);
 
-  // Zoom & drag event handlers
+  // Handle Zoom & Click to Drag
   const handleWheel = (e) => {
     e.preventDefault();
     const delta = e.deltaY;
@@ -211,9 +215,7 @@ function WorldMapModal() {
   };
 
   const handleMarkerClick = (node) => {
-    if (node.id === currentLocation) return; // Do nothing if clicking current location
-  
-    // Always update selected node and open info panel so user can see info about the clicked location
+    if (node.id === currentLocation) return;
     setSelectedNode(node);
     setIsInfoPanelOpen(true);
   
@@ -233,8 +235,6 @@ function WorldMapModal() {
       setPreviewPath(routeCoords);
       setSegmentTimes(segTimes);
     }
-    // Else, if traveling, do not update the preview path;
-    // simply show the new location's info while keeping the current travel route intact.
   };  
 
   const handleTravelButtonClick = () => {
@@ -242,10 +242,8 @@ function WorldMapModal() {
     if (!unlockedLocations.includes(selectedNode.id)) return;
   
     if (!isTraveling) {
-      // Not traveling: simply start travel.
       const { totalTime, route } = calculateRoute(currentLocation, selectedNode.id, worldMapData);
       startTravel(selectedNode.id, totalTime);
-      // Update the visual route preview:
       const routeCoords = route.map((nodeId) => worldMapData.nodes[nodeId]);
       const segTimes = calculateSegmentTimes(route);
       setPreviewPath(routeCoords);
@@ -253,24 +251,19 @@ function WorldMapModal() {
       setSelectedNode(null);
       setIsInfoPanelOpen(false);
     } else {
-      // Already traveling.
       if (selectedNode.id === travelingTo) {
-        // Previewed destination is the same as your current travel target.
         if (window.confirm(`Are you sure you want to cancel travel to ${selectedNode.name}?`)) {
           cancelTravelStore();
-          // Optionally clear the visual path if desired:
           setPreviewPath([]);
           setSegmentTimes([]);
           setSelectedNode(null);
           setIsInfoPanelOpen(false);
         }
       } else {
-        // Previewed destination is different.
         if (window.confirm(`Do you want to travel to ${selectedNode.name} instead?`)) {
           cancelTravelStore();
           const { totalTime, route } = calculateRoute(currentLocation, selectedNode.id, worldMapData);
           startTravel(selectedNode.id, totalTime);
-          // Immediately update the visual route preview:
           const routeCoords = route.map((nodeId) => worldMapData.nodes[nodeId]);
           const segTimes = calculateSegmentTimes(route);
           setPreviewPath(routeCoords);
@@ -343,21 +336,44 @@ function WorldMapModal() {
     setIsInfoPanelOpen(false);
   };
 
-  // Update travel progress every second
   useEffect(() => {
-    const interval = setInterval(() => {
+    const id = setInterval(() => {
       updateTravelProgress();
     }, 1000);
-    return () => clearInterval(interval);
+    return () => clearInterval(id);
   }, [updateTravelProgress]);
 
-  // If traveling, update UI to show the destination node
+  // recalc preview & position immediately whenever we open (or traveling state changes)
   useEffect(() => {
-    if (isTraveling) {
-      setSelectedNode(worldMapData.nodes[travelingTo]);
-      setIsInfoPanelOpen(true);
+    if (!isTraveling || travelingTo == null) return;
+
+    // force-store up to date, so timeElapsed is fresh
+    updateTravelProgress();
+
+    // re-compute route
+    const { route } = calculateRoute(currentLocation, travelingTo, worldMapData);
+    const coords = route.map((id) => worldMapData.nodes[id]);
+    setPreviewPath(coords);
+
+    // re-compute segment times
+    const times = [];
+    for (let i = 0; i < route.length - 1; i++) {
+      const from = route[i], to = route[i + 1];
+      const edge = worldMapData.edges.find(
+        (e) =>
+          (e.from === from && e.to === to) ||
+          (e.from === to && e.to === from)
+      );
+      times.push(edge ? edge.time : 0);
     }
-  }, [isTraveling, travelingTo]);
+    setSegmentTimes(times);
+
+    // open info panel at the target
+    setSelectedNode(worldMapData.nodes[travelingTo]);
+    setIsInfoPanelOpen(true);
+
+  }, [isTraveling, travelingTo, currentLocation, updateTravelProgress]);
+
 
   // Compute player's screen position
   const playerMapPos = isTraveling
@@ -366,7 +382,6 @@ function WorldMapModal() {
   const playerScreenPos = transformPoint(playerMapPos);
 
   const renderFeatureIcons = (features) => {
-    // List of features you want to display.
     const featureList = [
       { key: "mining", label: "Mining", icon: "⛏️" },
       { key: "farming", label: "Farming", icon: "🌱" },
@@ -385,7 +400,7 @@ function WorldMapModal() {
               key={feature.key}
               title={`${feature.label} is ${available ? "available" : "not available"} here.`}
               style={{
-                fontSize: "16px", // Adjust emoji size here (16px)
+                fontSize: "16px", // Emoji Size
                 filter: available ? "none" : "none",
                 border: `1px solid ${available ? "green" : "red"}`, // Green border if available, red if not.
                 borderRadius: "4px",
@@ -422,13 +437,6 @@ function WorldMapModal() {
   };  
 
   return (
-    <div>
-      <button className="open-map-btn" onClick={openModal}>
-        World Map
-      </button>
-
-      {isOpen && (
-        <div className="modal-overlay" onClick={closeModal}>
           <div
             className="worldmap-modal"
             onClick={(e) => e.stopPropagation()}
@@ -443,7 +451,7 @@ function WorldMapModal() {
           >
             <button
               className="close-map-btn"
-              onClick={closeModal}
+              onClick={onClose}
               style={{
                 position: "absolute",
                 top: 10,
@@ -595,7 +603,7 @@ function WorldMapModal() {
               </div>
             </div>
 
-            {selectedNode && isInfoPanelOpen && (
+            {(isTraveling || (selectedNode && isInfoPanelOpen)) && (
               <div
                 className="worldmap-bottom-panel"
                 style={{
@@ -608,53 +616,123 @@ function WorldMapModal() {
                   bottom: 0,
                   left: 0,
                   width: "100%",
+                  display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    width: "100%",
-                    alignItems: "center",
-                    marginBottom: "10px",
-                  }}
-                >
-                  <h4 style={{ textAlign: "center", flexGrow: 1, margin: 0 }}>
-                    {locationsData[selectedNode.id]?.name ? locationsData[selectedNode.id].name : "???"}
-                  </h4>
-                  <button
-                    onClick={closeInfoPanel}
-                    style={{ background: "none", color: "#fff", border: "none", fontSize: "16px", cursor: "pointer" }}
-                  >
-                    <span style={{ backgroundColor: "red", paddingTop: "3px", paddingRight: "8px", paddingLeft: "8px", paddingBottom: "3px" }}>
-                      X
-                    </span>
-                  </button>
-                </div>
-                {renderLocationInfo(selectedNode.id)}
-                {selectedNode && unlockedLocations.includes(selectedNode.id) && (
-  <button 
-    onClick={handleTravelButtonClick} 
-    style={{ marginTop: "10px", padding: "8px 16px" }}
-  >
-    {!isTraveling 
-      ? `Travel to ${selectedNode.name} (${totalTravelTime} sec)`
-      : selectedNode.id === travelingTo 
-         ? `Cancel Travel to ${selectedNode.name} (${Math.ceil((travelEndTime - Date.now())/1000)} sec remaining)`
-         : `Travel to ${selectedNode.name} (${totalTravelTime} sec)`
-    }
-  </button>
-)}
-
+                {isTraveling ? (
+                  // ─── Traveling View ─────────────────────────────────────
+                  <>
+                    <h4 style={{ margin: 0, marginBottom: "8px" }}>
+                      Traveling to {locationsData[travelingTo]?.name || "Unknown"}
+                    </h4>
+                    <p style={{ margin: 0 }}>
+                      Time Remaining:{" "}
+                      {new Date(Math.max(travelEndTime - Date.now(), 0))
+                        .toISOString()
+                        .substr(11, 8)}
+                    </p>
+                    <button
+                      onClick={cancelTravelStore}
+                      style={{
+                        marginTop: "10px",
+                        padding: "8px 16px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Cancel Travel
+                    </button>
+                  </>
+                ) : (
+                  // ─── Info View ─────────────────────────────────────────
+                  (() => {
+                    const node =
+                      selectedNode && isInfoPanelOpen
+                        ? selectedNode
+                        : worldMapData.nodes[currentLocation];
+                    const isCurrent = node.id === currentLocation;
+                    const unlocked = unlockedLocations.includes(node.id);
+                    return (
+                      <>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            width: "100%",
+                            marginBottom: "10px",
+                          }}
+                        >
+                          <h4
+                            style={{
+                              margin: 0,
+                              flexGrow: 1,
+                              textAlign: "center",
+                            }}
+                          >
+                            {locationsData[node.id]?.name || "Unknown"}
+                          </h4>
+                          <button
+                            onClick={closeInfoPanel}
+                            style={{
+                              background: "none",
+                              color: "#fff",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <span
+                              style={{
+                                backgroundColor: "red",
+                                padding: "3px 8px",
+                                display: "inline-block",
+                              }}
+                            >
+                              X
+                            </span>
+                          </button>
+                        </div>
+                        {renderLocationInfo(node.id)}
+                        {isCurrent ? (
+                          <button
+                            disabled
+                            style={{
+                              marginTop: "10px",
+                              padding: "8px 16px",
+                              opacity: 0.5,
+                              cursor: "not-allowed",
+                            }}
+                          >
+                            You are here
+                          </button>
+                        ) : unlocked ? (
+                          <button
+                            onClick={handleTravelButtonClick}
+                            style={{
+                              marginTop: "10px",
+                              padding: "8px 16px",
+                              cursor: "pointer",
+                            }}
+                          >
+                            Travel to {node.name} (
+                            {calculateRoute(
+                              currentLocation,
+                              node.id,
+                              worldMapData
+                            ).totalTime}{" "}
+                            sec)
+                          </button>
+                        ) : null}
+                      </>
+                    );
+                  })()
+                )}
               </div>
             )}
           </div>
-        </div>
-      )}
-    </div>
-  );
-}
+        );
+      }
 
-export default WorldMapModal;
+      export default WorldMap;
